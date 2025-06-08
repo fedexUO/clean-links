@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Plus, Settings, ExternalLink, Trophy, Edit3 } from 'lucide-react';
+import { Plus, Settings, ExternalLink, Trophy, Edit3, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import LinkCard from '../components/LinkCard';
 import LinkEditor from '../components/LinkEditor';
