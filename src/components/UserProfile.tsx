@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, Edit3 } from 'lucide-react';
+import { Edit3 } from 'lucide-react';
 import { UserProfile as UserProfileType, getNextLevelXP } from '../utils/userProfile';
 import LevelBadge from './LevelBadge';
 
@@ -18,32 +18,34 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
   
   const pointsToNextLevel = profile.level === 'diamante' ? 0 : nextLevelXP - profile.xp;
 
-  const getAvatarStyle = (avatarId: number) => {
+  const getAvatarContent = (avatarId: number) => {
     const avatars = [
-      { bg: 'bg-blue-500', shape: 'rounded-full' },
-      { bg: 'bg-green-500', shape: 'rounded-none rotate-45' },
-      { bg: 'bg-yellow-500', shape: 'rounded-lg' },
-      { bg: 'bg-gray-500', shape: 'rounded-md' },
-      { bg: 'bg-emerald-500', shape: 'rounded-full' },
+      { content: '😊', bg: 'bg-blue-100' },
+      { content: '🚀', bg: 'bg-purple-100' },
+      { content: '🎨', bg: 'bg-pink-100' },
+      { content: '⭐', bg: 'bg-yellow-100' },
+      { content: '🔥', bg: 'bg-red-100' },
+      { content: '💎', bg: 'bg-cyan-100' },
+      { content: '🌟', bg: 'bg-indigo-100' },
+      { content: '🎯', bg: 'bg-emerald-100' },
     ];
     return avatars[avatarId - 1] || avatars[0];
   };
 
-  const avatarStyle = getAvatarStyle(profile.avatar);
+  const avatar = getAvatarContent(profile.avatar);
 
   return (
     <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-slate-100/50">
       <div className="flex items-center gap-4">
-        {/* Avatar senza outline */}
         <div className="relative group">
           <button
             onClick={onEditAvatar}
             className="relative block"
           >
             <div
-              className={`w-14 h-14 ${avatarStyle.bg} ${avatarStyle.shape} flex items-center justify-center transition-all hover:scale-105`}
+              className={`w-14 h-14 ${avatar.bg} rounded-full flex items-center justify-center transition-all hover:scale-105 super-circle text-xl`}
             >
-              <User size={20} className="text-white" />
+              {avatar.content}
             </div>
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center">
               <Edit3 size={14} className="text-white" />
@@ -51,7 +53,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
           </button>
         </div>
 
-        {/* Info */}
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <button
@@ -75,7 +76,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
             )}
           </div>
 
-          {/* Progress Bar */}
           {profile.level !== 'diamante' && (
             <div className="w-full bg-slate-200/70 rounded-full h-1.5">
               <div
@@ -86,7 +86,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
           )}
         </div>
 
-        {/* Stats */}
         <div className="text-right text-xs text-slate-500">
           <div>Login: {profile.consecutiveLogins}</div>
           <div>Link: {profile.stats.linksCreated}</div>
