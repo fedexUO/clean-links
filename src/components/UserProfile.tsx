@@ -29,35 +29,24 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
     return avatars[avatarId - 1] || avatars[0];
   };
 
-  const getLevelOutline = (level: UserProfileType['level']) => {
-    switch (level) {
-      case 'bronzo': return 'ring-2 ring-amber-400 ring-offset-2';
-      case 'argento': return 'ring-2 ring-slate-400 ring-offset-2';
-      case 'oro': return 'ring-2 ring-yellow-400 ring-offset-2';
-      case 'diamante': return 'ring-2 ring-blue-400 ring-offset-2 shadow-lg shadow-blue-200';
-      default: return '';
-    }
-  };
-
   const avatarStyle = getAvatarStyle(profile.avatar);
-  const levelOutline = getLevelOutline(profile.level);
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-100">
+    <div className="bg-white/70 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-slate-100/50">
       <div className="flex items-center gap-4">
-        {/* Avatar with Level Outline */}
+        {/* Avatar senza outline */}
         <div className="relative group">
           <button
             onClick={onEditAvatar}
             className="relative block"
           >
             <div
-              className={`w-16 h-16 ${avatarStyle.bg} ${avatarStyle.shape} ${levelOutline} flex items-center justify-center transition-all hover:scale-105`}
+              className={`w-14 h-14 ${avatarStyle.bg} ${avatarStyle.shape} flex items-center justify-center transition-all hover:scale-105`}
             >
-              <User size={24} className="text-white" />
+              <User size={20} className="text-white" />
             </div>
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center">
-              <Edit3 size={16} className="text-white" />
+              <Edit3 size={14} className="text-white" />
             </div>
           </button>
         </div>
@@ -67,20 +56,20 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
           <div className="flex items-center gap-2 mb-1">
             <button
               onClick={onEditUsername}
-              className="font-semibold text-slate-800 hover:text-blue-600 transition-colors"
+              className="font-semibold text-slate-800 hover:text-blue-600 transition-colors text-sm"
             >
               {profile.username}
             </button>
-            <Edit3 size={14} className="text-slate-400" />
+            <Edit3 size={12} className="text-slate-400" />
           </div>
           
           <div className="flex items-center gap-2 mb-2">
             <LevelBadge level={profile.level} size="sm" />
-            <span className="text-sm text-slate-500">
+            <span className="text-xs text-slate-500">
               {profile.xp} XP
             </span>
             {profile.level !== 'diamante' && (
-              <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+              <span className="text-xs text-slate-400 bg-slate-100/70 px-2 py-0.5 rounded-full">
                 -{pointsToNextLevel} per level up
               </span>
             )}
@@ -88,9 +77,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
 
           {/* Progress Bar */}
           {profile.level !== 'diamante' && (
-            <div className="w-full bg-slate-200 rounded-full h-2">
+            <div className="w-full bg-slate-200/70 rounded-full h-1.5">
               <div
-                className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -99,7 +88,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
 
         {/* Stats */}
         <div className="text-right text-xs text-slate-500">
-          <div>Login: {profile.consecutiveLogins} giorni</div>
+          <div>Login: {profile.consecutiveLogins}</div>
           <div>Link: {profile.stats.linksCreated}</div>
         </div>
       </div>
