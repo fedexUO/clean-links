@@ -1,27 +1,18 @@
 
 import React, { useState } from 'react';
-import { X, Save, Palette } from 'lucide-react';
+import { Palette } from 'lucide-react';
 import { LinkItem } from '../utils/linkStorage';
+import { UserProfile } from '../utils/userProfile';
 
 interface StyleEditorProps {
   link: LinkItem;
   onSave: (style: LinkItem['style']) => void;
   onClose: () => void;
+  userLevel?: UserProfile['level'];
 }
 
-const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
+const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose, userLevel }) => {
   const [style, setStyle] = useState(link.style);
-
-  const presetColors = [
-    '#e2e8f0', // slate-200
-    '#3b82f6', // blue-500
-    '#10b981', // emerald-500
-    '#f59e0b', // amber-500
-    '#ef4444', // red-500
-    '#8b5cf6', // violet-500
-    '#ec4899', // pink-500
-    '#06b6d4', // cyan-500
-  ];
 
   const borderStyles = [
     { value: 'solid', label: 'Solido' },
@@ -30,84 +21,93 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
     { value: 'double', label: 'Doppio' },
   ] as const;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(style);
-    onClose();
-  };
+  const outlineStyles = [
+    { value: 'none', label: 'Nessuno', level: null },
+    { value: 'bronzo', label: 'Bronzo', level: 'bronzo' },
+    { value: 'argento', label: 'Argento', level: 'argento' },
+    { value: 'oro', label: 'Oro', level: 'oro' },
+    { value: 'diamante', label: 'Diamante', level: 'diamante' },
+  ] as const;
 
   const updateStyle = (field: keyof LinkItem['style'], value: any) => {
-    setStyle(prev => ({ ...prev, [field]: value }));
+    const newStyle = { ...style, [field]: value };
+    setStyle(newStyle);
+    onSave(newStyle); // Applicazione in tempo reale
+  };
+
+  const getOutlineClass = (outlineType: string) => {
+    switch (outlineType) {
+      case 'bronzo': return 'ring-2 ring-amber-400/60 ring-offset-2';
+      case 'argento': return 'ring-2 ring-slate-400/60 ring-offset-2';
+      case 'oro': return 'ring-2 ring-yellow-400/60 ring-offset-2';
+      case 'diamante': return 'ring-2 ring-blue-400/60 ring-offset-2 shadow-lg shadow-blue-200/40';
+      default: return '';
+    }
+  };
+
+  const isOutlineUnlocked = (level: string | null) => {
+    if (!level) return true;
+    if (!userLevel) return false;
+    
+    const levels = ['bronzo', 'argento', 'oro', 'diamante'];
+    const userLevelIndex = levels.indexOf(userLevel);
+    const requiredLevelIndex = levels.indexOf(level);
+    
+    return userLevelIndex >= requiredLevelIndex;
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-white/30">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-purple-100/70 rounded-2xl">
             <Palette className="text-purple-600" size={20} />
-            <h2 className="text-xl font-semibold text-slate-800">
-              Personalizza Stile
-            </h2>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <X size={24} />
-          </button>
+          <h2 className="text-xl font-semibold text-slate-800">Personalizza Stile</h2>
         </div>
 
-        {/* Preview */}
-        <div className="mb-6 p-4 bg-slate-50 rounded-lg">
-          <p className="text-sm text-slate-600 mb-2">Anteprima:</p>
+        {/* Anteprima compatta */}
+        <div className="mb-6 p-3 bg-slate-50/70 rounded-2xl">
+          <p className="text-xs text-slate-500 mb-2">Anteprima:</p>
           <div
-            className="bg-white p-4 rounded-lg"
+            className={`bg-white/90 p-3 rounded-xl transition-all duration-300 ${getOutlineClass(style.outline || 'none')}`}
             style={{
               borderWidth: `${style.borderWidth}px`,
               borderColor: style.borderColor,
               borderStyle: style.borderStyle,
             }}
           >
-            <h3 className="font-semibold text-slate-800">{link.name}</h3>
-            <p className="text-slate-500 text-sm">{link.url}</p>
+            <h3 className="font-medium text-slate-800 text-sm">{link.name}</h3>
+            <p className="text-slate-500 text-xs mt-1">{link.description || link.url}</p>
           </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Color Selection */}
+        <div className="space-y-6">
+          {/* Color Wheel */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-3">
               Colore Bordo
             </label>
-            <div className="grid grid-cols-4 gap-2 mb-3">
-              {presetColors.map((color) => (
-                <button
-                  key={color}
-                  type="button"
-                  onClick={() => updateStyle('borderColor', color)}
-                  className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                    style.borderColor === color
-                      ? 'border-slate-400 scale-110'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                  style={{ backgroundColor: color }}
-                />
-              ))}
+            <div className="flex items-center gap-4">
+              <input
+                type="color"
+                value={style.borderColor}
+                onChange={(e) => updateStyle('borderColor', e.target.value)}
+                className="w-16 h-16 rounded-2xl border-2 border-slate-200 cursor-pointer shadow-sm transition-transform hover:scale-105"
+              />
+              <div className="flex-1">
+                <div className="text-sm text-slate-600 mb-1">Colore selezionato:</div>
+                <div className="text-xs font-mono text-slate-500 bg-slate-100/70 px-2 py-1 rounded-lg">
+                  {style.borderColor}
+                </div>
+              </div>
             </div>
-            <input
-              type="color"
-              value={style.borderColor}
-              onChange={(e) => updateStyle('borderColor', e.target.value)}
-              className="w-full h-10 rounded-lg border border-slate-300 cursor-pointer"
-            />
           </div>
 
           {/* Border Width */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-3">
               Spessore: {style.borderWidth}px
             </label>
             <input
@@ -116,17 +116,17 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
               max="8"
               value={style.borderWidth}
               onChange={(e) => updateStyle('borderWidth', parseInt(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
             />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
+            <div className="flex justify-between text-xs text-slate-400 mt-1">
               <span>1px</span>
               <span>8px</span>
             </div>
           </div>
 
-          {/* Border Style */}
+          {/* Border Style con anteprime */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-3">
               Stile Bordo
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -135,36 +135,61 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
                   key={borderStyle.value}
                   type="button"
                   onClick={() => updateStyle('borderStyle', borderStyle.value)}
-                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                  className={`p-3 rounded-xl border-2 text-sm font-medium transition-all hover:scale-[1.02] ${
                     style.borderStyle === borderStyle.value
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                      ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-md shadow-blue-200/30'
+                      : 'border-slate-200/60 text-slate-600 hover:border-slate-300/80 bg-white/50'
                   }`}
                 >
-                  {borderStyle.label}
+                  <div className="mb-2">{borderStyle.label}</div>
+                  <div 
+                    className="w-full h-1 bg-slate-400"
+                    style={{ borderStyle: borderStyle.value, borderWidth: '2px', borderColor: '#64748b' }}
+                  />
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
-            >
-              Annulla
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
-            >
-              <Save size={18} />
-              Applica
-            </button>
+          {/* Outline Styles */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-3">
+              Outline Livello
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {outlineStyles.map((outline) => {
+                const isUnlocked = isOutlineUnlocked(outline.level);
+                return (
+                  <button
+                    key={outline.value}
+                    type="button"
+                    onClick={() => isUnlocked && updateStyle('outline', outline.value)}
+                    disabled={!isUnlocked}
+                    className={`p-3 rounded-xl border-2 text-sm font-medium transition-all relative ${
+                      style.outline === outline.value
+                        ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-md shadow-blue-200/30'
+                        : isUnlocked
+                        ? 'border-slate-200/60 text-slate-600 hover:border-slate-300/80 bg-white/50 hover:scale-[1.02]'
+                        : 'border-slate-200/30 text-slate-400 bg-slate-50/30 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className="mb-2">{outline.label}</div>
+                    <div 
+                      className={`w-8 h-8 bg-white/90 rounded-lg mx-auto transition-all ${
+                        outline.value !== 'none' ? getOutlineClass(outline.value) : 'border border-slate-300'
+                      }`}
+                    />
+                    {!isUnlocked && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
+                        <span className="text-xs text-slate-500">🔒</span>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
