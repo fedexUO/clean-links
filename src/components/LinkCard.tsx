@@ -24,60 +24,60 @@ const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, onStyleEdit
   return (
     <div className="group relative">
       <div
-        className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer transform hover:scale-[1.02]"
+        className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-[1.02] border border-slate-100"
         style={borderStyle}
         onClick={handleClick}
       >
-        {/* Link Content */}
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-slate-800 text-lg group-hover:text-blue-600 transition-colors">
+        {/* Link Content - Stile iOS più compatto */}
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-medium text-slate-800 text-base group-hover:text-blue-600 transition-colors line-clamp-1">
             {link.name}
           </h3>
-          <ExternalLink size={18} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
+          <ExternalLink size={16} className="text-slate-400 group-hover:text-blue-500 transition-colors flex-shrink-0 ml-2" />
         </div>
         
-        <p className="text-slate-500 text-sm break-all">
+        <p className="text-slate-500 text-xs break-all line-clamp-1 mb-1">
           {link.url}
         </p>
         
         {link.description && (
-          <p className="text-slate-600 text-sm mt-2">
+          <p className="text-slate-600 text-sm line-clamp-2">
             {link.description}
           </p>
         )}
       </div>
 
-      {/* Action Buttons */}
-      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1">
+      {/* Action Buttons - Più piccoli e iOS style */}
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onStyleEdit();
           }}
-          className="bg-purple-100 hover:bg-purple-200 text-purple-600 p-2 rounded-lg transition-colors"
+          className="bg-white/80 backdrop-blur-sm hover:bg-purple-50 text-purple-600 p-1.5 rounded-lg transition-colors shadow-sm"
           title="Modifica stile"
         >
-          <Palette size={14} />
+          <Palette size={12} />
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onEdit();
           }}
-          className="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-colors"
+          className="bg-white/80 backdrop-blur-sm hover:bg-blue-50 text-blue-600 p-1.5 rounded-lg transition-colors shadow-sm"
           title="Modifica link"
         >
-          <Edit3 size={14} />
+          <Edit3 size={12} />
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-lg transition-colors"
+          className="bg-white/80 backdrop-blur-sm hover:bg-red-50 text-red-600 p-1.5 rounded-lg transition-colors shadow-sm"
           title="Elimina link"
         >
-          <Trash2 size={14} />
+          <Trash2 size={12} />
         </button>
       </div>
     </div>

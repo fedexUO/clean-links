@@ -108,7 +108,7 @@ const Index = () => {
     if (oldLevel !== newLevel) {
       toast({
         title: "Level Up! 🚀",
-        description: `Hai raggiunto il livello ${newLevel.toUpperCase()}!`,
+        description: `Hai raggiunto il livello ${newLevel.toUpperCase()}! Hai sbloccato un nuovo outline!`,
       });
     }
   };
@@ -295,7 +295,7 @@ const Index = () => {
       <main className="max-w-4xl mx-auto px-4 py-8">
         {links.length === 0 ? (
           <div className="text-center py-16">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-slate-100">
               <ExternalLink size={48} className="mx-auto text-slate-400 mb-4" />
               <h3 className="text-xl font-semibold text-slate-700 mb-2">
                 Nessun link ancora
@@ -312,7 +312,7 @@ const Index = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {links.map((link) => (
               <LinkCard
                 key={link.id}

@@ -15,6 +15,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
   const progressPercentage = profile.level === 'diamante' 
     ? 100 
     : (profile.xp / nextLevelXP) * 100;
+  
+  const pointsToNextLevel = profile.level === 'diamante' ? 0 : nextLevelXP - profile.xp;
 
   const getAvatarStyle = (avatarId: number) => {
     const avatars = [
@@ -27,19 +29,30 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
     return avatars[avatarId - 1] || avatars[0];
   };
 
+  const getLevelOutline = (level: UserProfileType['level']) => {
+    switch (level) {
+      case 'bronzo': return 'ring-2 ring-amber-400 ring-offset-2';
+      case 'argento': return 'ring-2 ring-slate-400 ring-offset-2';
+      case 'oro': return 'ring-2 ring-yellow-400 ring-offset-2';
+      case 'diamante': return 'ring-2 ring-blue-400 ring-offset-2 shadow-lg shadow-blue-200';
+      default: return '';
+    }
+  };
+
   const avatarStyle = getAvatarStyle(profile.avatar);
+  const levelOutline = getLevelOutline(profile.level);
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
+    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-100">
       <div className="flex items-center gap-4">
-        {/* Avatar */}
+        {/* Avatar with Level Outline */}
         <div className="relative group">
           <button
             onClick={onEditAvatar}
             className="relative block"
           >
             <div
-              className={`w-16 h-16 ${avatarStyle.bg} ${avatarStyle.shape} flex items-center justify-center transition-transform hover:scale-105`}
+              className={`w-16 h-16 ${avatarStyle.bg} ${avatarStyle.shape} ${levelOutline} flex items-center justify-center transition-all hover:scale-105`}
             >
               <User size={24} className="text-white" />
             </div>
@@ -66,6 +79,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
             <span className="text-sm text-slate-500">
               {profile.xp} XP
             </span>
+            {profile.level !== 'diamante' && (
+              <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+                -{pointsToNextLevel} per level up
+              </span>
+            )}
           </div>
 
           {/* Progress Bar */}
