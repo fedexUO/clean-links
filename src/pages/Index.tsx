@@ -285,24 +285,19 @@ const Index = () => {
   const getBackgroundStyle = () => {
     const styles = [
       {
-        backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)',
-        animation: 'pulse 4s ease-in-out infinite'
+        backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)'
       },
       {
-        backgroundImage: 'radial-gradient(ellipse at 25% 25%, rgba(59, 130, 246, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 75% 75%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)',
-        animation: 'float 6s ease-in-out infinite'
+        backgroundImage: 'radial-gradient(ellipse at 25% 25%, rgba(59, 130, 246, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 75% 75%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)'
       },
       {
-        backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(251, 146, 60, 0.25) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.25) 0%, transparent 60%)',
-        animation: 'glow 5s ease-in-out infinite alternate'
+        backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(251, 146, 60, 0.25) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.25) 0%, transparent 60%)'
       },
       {
-        backgroundImage: 'radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.2) 0%, transparent 50%)',
-        animation: 'drift 8s ease-in-out infinite'
+        backgroundImage: 'radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.2) 0%, transparent 50%)'
       },
       {
-        backgroundImage: 'radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.25) 0%, transparent 50%)',
-        animation: 'sparkle 7s ease-in-out infinite'
+        backgroundImage: 'radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.25) 0%, transparent 50%)'
       }
     ];
     return styles[currentBackground - 1] || styles[0];
@@ -310,24 +305,6 @@ const Index = () => {
 
   return (
     <>
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-10px) rotate(2deg); }
-        }
-        @keyframes glow {
-          0% { filter: brightness(1) saturate(1); }
-          100% { filter: brightness(1.1) saturate(1.2); }
-        }
-        @keyframes drift {
-          0%, 100% { transform: translateX(0px); }
-          50% { transform: translateX(5px); }
-        }
-        @keyframes sparkle {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.05); }
-        }
-      `}</style>
       
       <div className={`min-h-screen ${getBackgroundClass()}`} style={getBackgroundStyle()}>
         {/* Header */}
@@ -359,28 +336,28 @@ const Index = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowFontSelector(true)}
-                  className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50"
+                  className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50 super-circle"
                   title="Cambia font"
                 >
                   Aa
                 </button>
                 <button
                   onClick={() => setShowBackgroundSelector(true)}
-                  className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50"
+                  className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50 super-circle"
                   title="Cambia sfondo"
                 >
                   <MoreVertical size={18} />
                 </button>
                 <button
                   onClick={() => setShowMissionsPanel(true)}
-                  className="bg-purple-600/90 hover:bg-purple-600 text-white p-3 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-purple-500/50"
+                  className="bg-purple-600/90 hover:bg-purple-600 text-white p-3 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-purple-500/50 super-circle"
                   title="Missioni"
                 >
                   <Trophy size={18} />
                 </button>
                 <button
                   onClick={() => setShowLinkEditor(true)}
-                  className="bg-blue-600/90 hover:bg-blue-600 text-white p-3 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-blue-500/50"
+                  className="bg-blue-600/90 hover:bg-blue-600 text-white p-3 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-blue-500/50 super-circle"
                   title="Aggiungi link"
                 >
                   <Plus size={18} />
@@ -395,7 +372,6 @@ const Index = () => {
           {links.length === 0 ? (
             <div className="text-center py-16">
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-slate-100/50">
-                {/* ... keep existing code (empty state) */}
                 <div className="text-6xl mb-4">🔗</div>
                 <h3 className="text-xl font-semibold text-slate-700 mb-2">
                   Nessun link ancora
@@ -405,7 +381,7 @@ const Index = () => {
                 </p>
                 <button
                   onClick={() => setShowLinkEditor(true)}
-                  className="bg-blue-600/90 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm"
+                  className="bg-blue-600/90 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm super-circle"
                 >
                   Aggiungi il primo link
                 </button>
