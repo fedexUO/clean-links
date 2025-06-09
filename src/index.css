@@ -85,7 +85,10 @@
 
   body {
     @apply bg-background text-foreground;
-    transition: font-family 0.3s ease-in-out;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
   }
 }
 
@@ -108,5 +111,118 @@
   
   .slider::-moz-range-thumb {
     @apply w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 cursor-pointer shadow-lg border-0;
+  }
+
+  /* Animazioni outline */
+  .bronzo-animation {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bronzo-animation::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #d97706, #f59e0b, #d97706);
+    background-size: 200% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: bronzo-flow 3s ease-in-out infinite;
+  }
+
+  @keyframes bronzo-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .argento-animation {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .argento-animation::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #64748b, #cbd5e1, #64748b);
+    background-size: 200% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: argento-flow 2.5s ease-in-out infinite;
+  }
+
+  @keyframes argento-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .oro-animation {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .oro-animation::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #eab308, #fbbf24, #eab308);
+    background-size: 200% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: oro-flow 2s ease-in-out infinite;
+  }
+
+  @keyframes oro-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .diamante-animation {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diamante-animation::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #2563eb, #60a5fa, #93c5fd, #60a5fa, #2563eb);
+    background-size: 300% 300%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: diamante-sparkle 1.5s ease-in-out infinite;
+  }
+
+  .diamante-animation::after {
+    content: '💎';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    animation: sparkle 2s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes diamante-sparkle {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
   }
 }

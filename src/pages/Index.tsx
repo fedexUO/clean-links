@@ -28,14 +28,12 @@ const Index = () => {
   const [showMissionsPanel, setShowMissionsPanel] = useState(false);
   const [showUsernameEditor, setShowUsernameEditor] = useState(false);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
-  const [showFontSelector, setShowFontSelector] = useState(false);
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
-  const [title, setTitle] = useState('I Miei Link');
+  const [title, setTitle] = useState('I MIEI LINK');
   const [userProfile, setUserProfile] = useState<UserProfileType | null>(null);
   const [missions, setMissions] = useState<Mission[]>([]);
   const [usernameInput, setUsernameInput] = useState('');
   const [currentBackground, setCurrentBackground] = useState(1);
-  const [currentFont, setCurrentFont] = useState('system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -57,12 +55,6 @@ const Index = () => {
     const savedBackground = localStorage.getItem('selectedBackground');
     if (savedBackground) {
       setCurrentBackground(parseInt(savedBackground));
-    }
-
-    const savedFont = localStorage.getItem('selectedFont');
-    if (savedFont) {
-      setCurrentFont(savedFont);
-      document.body.style.fontFamily = savedFont;
     }
   }, []);
 
@@ -227,8 +219,8 @@ const Index = () => {
   };
 
   const handleTitleChange = (newTitle: string) => {
-    setTitle(newTitle);
-    localStorage.setItem('pageTitle', newTitle);
+    setTitle(newTitle.toUpperCase());
+    localStorage.setItem('pageTitle', newTitle.toUpperCase());
   };
 
   const handleAvatarChange = (avatar: number) => {
@@ -241,7 +233,7 @@ const Index = () => {
 
   const handleUsernameChange = () => {
     if (userProfile && usernameInput.trim()) {
-      const updatedProfile = { ...userProfile, username: usernameInput.trim() };
+      const updatedProfile = { ...userProfile, username: usernameInput.trim().toUpperCase() };
       setUserProfile(updatedProfile);
       saveUserProfile(updatedProfile);
       setShowUsernameEditor(false);
@@ -252,13 +244,6 @@ const Index = () => {
     setCurrentBackground(background);
     localStorage.setItem('selectedBackground', background.toString());
     setShowBackgroundSelector(false);
-  };
-
-  const handleFontChange = (font: string) => {
-    setCurrentFont(font);
-    localStorage.setItem('selectedFont', font);
-    document.body.style.fontFamily = font;
-    setShowFontSelector(false);
   };
 
   const openEditLink = (link: LinkItem) => {
@@ -305,7 +290,6 @@ const Index = () => {
 
   return (
     <>
-      
       <div className={`min-h-screen ${getBackgroundClass()}`} style={getBackgroundStyle()}>
         {/* Header */}
         <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-10">
@@ -322,43 +306,36 @@ const Index = () => {
             )}
 
             <div className="flex items-center justify-between">
-              <div className="flex-1">
+              <div className="flex-1 text-center">
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
-                  className="text-2xl font-bold text-slate-800 bg-transparent border-none outline-none focus:ring-2 focus:ring-blue-500/30 rounded-xl px-3 py-2 transition-all"
-                  placeholder="Il tuo titolo"
+                  className="text-2xl font-black text-slate-800 bg-transparent border-none outline-none focus:ring-2 focus:ring-blue-500/30 rounded-xl px-3 py-2 transition-all uppercase tracking-widest text-center"
+                  placeholder="IL TUO TITOLO"
                 />
-                <p className="text-slate-600 mt-1 text-sm px-3">La tua collezione personale di link</p>
+                <p className="text-slate-600 mt-1 text-sm px-3 font-bold uppercase tracking-wider text-center">LA TUA COLLEZIONE PERSONALE DI LINK</p>
               </div>
               
               <div className="flex gap-3">
                 <button
-                  onClick={() => setShowFontSelector(true)}
-                  className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50 super-circle"
-                  title="Cambia font"
-                >
-                  Aa
-                </button>
-                <button
                   onClick={() => setShowBackgroundSelector(true)}
-                  className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50 super-circle"
-                  title="Cambia sfondo"
+                  className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-full transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50 super-circle"
+                  title="CAMBIA SFONDO"
                 >
                   <MoreVertical size={18} />
                 </button>
                 <button
                   onClick={() => setShowMissionsPanel(true)}
-                  className="bg-purple-600/90 hover:bg-purple-600 text-white p-3 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-purple-500/50 super-circle"
-                  title="Missioni"
+                  className="bg-purple-600/90 hover:bg-purple-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-purple-500/50 super-circle"
+                  title="MISSIONI"
                 >
                   <Trophy size={18} />
                 </button>
                 <button
                   onClick={() => setShowLinkEditor(true)}
-                  className="bg-blue-600/90 hover:bg-blue-600 text-white p-3 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-blue-500/50 super-circle"
-                  title="Aggiungi link"
+                  className="bg-blue-600/90 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-blue-500/50 super-circle"
+                  title="AGGIUNGI LINK"
                 >
                   <Plus size={18} />
                 </button>
@@ -373,17 +350,17 @@ const Index = () => {
             <div className="text-center py-16">
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-slate-100/50">
                 <div className="text-6xl mb-4">🔗</div>
-                <h3 className="text-xl font-semibold text-slate-700 mb-2">
-                  Nessun link ancora
+                <h3 className="text-xl font-black text-slate-700 mb-2 uppercase tracking-widest text-center">
+                  NESSUN LINK ANCORA
                 </h3>
-                <p className="text-slate-500 mb-6">
-                  Inizia aggiungendo i tuoi siti e strumenti preferiti
+                <p className="text-slate-500 mb-6 font-bold uppercase tracking-wider text-center">
+                  INIZIA AGGIUNGENDO I TUOI SITI E STRUMENTI PREFERITI
                 </p>
                 <button
                   onClick={() => setShowLinkEditor(true)}
-                  className="bg-blue-600/90 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm super-circle"
+                  className="bg-blue-600/90 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-black transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm super-circle uppercase tracking-wider"
                 >
-                  Aggiungi il primo link
+                  AGGIUNGI IL PRIMO LINK
                 </button>
               </div>
             </div>
@@ -449,20 +426,12 @@ const Index = () => {
           />
         )}
 
-        {showFontSelector && (
-          <FontSelector
-            currentFont={currentFont}
-            onSelect={handleFontChange}
-            onClose={() => setShowFontSelector(false)}
-          />
-        )}
-
         {/* Username Editor Modal */}
         {showUsernameEditor && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/30">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-slate-800">Modifica Nome</h2>
+                <h2 className="text-xl font-black text-slate-800 uppercase tracking-widest text-center">MODIFICA NOME</h2>
                 <button
                   onClick={() => setShowUsernameEditor(false)}
                   className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100/70 rounded-full"
@@ -473,30 +442,30 @@ const Index = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Nome utente
+                  <label className="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest text-center">
+                    NOME UTENTE
                   </label>
                   <input
                     type="text"
                     value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-300/60 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all backdrop-blur-sm"
-                    placeholder="Il tuo nome"
+                    onChange={(e) => setUsernameInput(e.target.value.toUpperCase())}
+                    className="w-full px-4 py-3 border border-slate-300/60 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all backdrop-blur-sm font-bold uppercase tracking-widest text-center"
+                    placeholder="IL TUO NOME"
                   />
                 </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowUsernameEditor(false)}
-                    className="flex-1 px-4 py-3 text-slate-600 border border-slate-300/60 rounded-2xl hover:bg-slate-50/70 transition-all"
+                    className="flex-1 px-4 py-3 text-slate-600 border border-slate-300/60 rounded-2xl hover:bg-slate-50/70 transition-all font-bold uppercase tracking-widest"
                   >
-                    Annulla
+                    ANNULLA
                   </button>
                   <button
                     onClick={handleUsernameChange}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl font-bold uppercase tracking-widest"
                   >
-                    Salva
+                    SALVA
                   </button>
                 </div>
               </div>
