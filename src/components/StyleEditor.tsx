@@ -15,15 +15,15 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
   const [style, setStyle] = useState(link.style);
 
   const borderStyles = [
-    { value: 'solid', label: 'SOLIDO' },
-    { value: 'dashed', label: 'TRATTEGGIATO' },
-    { value: 'dotted', label: 'PUNTINATO' },
-    { value: 'double', label: 'DOPPIO' },
-    { value: 'oro-colante', label: 'ORO COLANTE', effect: true },
-    { value: 'argento-colante', label: 'ARGENTO COLANTE', effect: true },
-    { value: 'bronzo-colante', label: 'BRONZO COLANTE', effect: true },
-    { value: 'diamanti-luccicanti', label: 'DIAMANTI', effect: true },
-    { value: 'lego-border', label: 'LEGO', effect: true },
+    { value: 'solid', label: 'SOLIDO', effect: false },
+    { value: 'dashed', label: 'TRATTEGGIATO', effect: false },
+    { value: 'dotted', label: 'PUNTINATO', effect: false },
+    { value: 'double', label: 'DOPPIO', effect: false },
+    { value: 'oro-colante', label: '🔥 ORO COLANTE', effect: true },
+    { value: 'argento-colante', label: '❄️ ARGENTO COLANTE', effect: true },
+    { value: 'bronzo-colante', label: '🔥🟤 BRONZO COLANTE', effect: true },
+    { value: 'diamanti-luccicanti', label: '💎 DIAMANTI', effect: true },
+    { value: 'lego-border', label: '🧱 LEGO', effect: true },
   ] as const;
 
   const updateStyle = (field: keyof LinkItem['style'], value: any) => {
@@ -51,17 +51,32 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
     ];
 
     return (
-      <div className="flex flex-wrap gap-2 justify-center">
-        {colors.map((color) => (
-          <button
-            key={color}
-            onClick={() => updateStyle('borderColor', color)}
-            className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
-              style.borderColor === color ? 'border-slate-800 ring-2 ring-slate-300' : 'border-slate-200'
-            }`}
-            style={{ backgroundColor: color }}
-          />
-        ))}
+      <div className="flex justify-center">
+        <div className="relative w-32 h-32">
+          {colors.map((color, index) => {
+            const angle = (index * 360) / colors.length;
+            const radius = 50;
+            const x = Math.cos((angle * Math.PI) / 180) * radius;
+            const y = Math.sin((angle * Math.PI) / 180) * radius;
+            
+            return (
+              <button
+                key={color}
+                onClick={() => updateStyle('borderColor', color)}
+                className={`absolute w-6 h-6 rounded-full border-2 transition-all hover:scale-125 ${
+                  style.borderColor === color ? 'border-slate-800 ring-2 ring-slate-300' : 'border-white'
+                }`}
+                style={{
+                  backgroundColor: color,
+                  left: `calc(50% + ${x}px - 12px)`,
+                  top: `calc(50% + ${y}px - 12px)`,
+                }}
+              />
+            );
+          })}
+          {/* Centro della ruota */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border-2 border-slate-300"></div>
+        </div>
       </div>
     );
   };
