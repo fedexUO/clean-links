@@ -2,15 +2,19 @@
 import React from 'react';
 import { Edit3 } from 'lucide-react';
 import { UserProfile as UserProfileType, getNextLevelXP } from '../utils/userProfile';
+import { Currency } from '../utils/currency';
 import LevelBadge from './LevelBadge';
+import BadgeTooltip from './BadgeTooltip';
+import CoinDisplay from './CoinDisplay';
 
 interface UserProfileProps {
   profile: UserProfileType;
+  currency: Currency;
   onEditAvatar: () => void;
   onEditUsername: () => void;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEditUsername }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ profile, currency, onEditAvatar, onEditUsername }) => {
   const nextLevelXP = getNextLevelXP(profile.level);
   const progressPercentage = profile.level === 'diamante' 
     ? 100 
@@ -119,7 +123,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
           </div>
           
           <div className="flex items-center gap-2 mb-2">
-            <LevelBadge level={profile.level} size="sm" />
+            <BadgeTooltip profile={profile} currency={currency}>
+              <LevelBadge level={profile.level} size="sm" />
+            </BadgeTooltip>
             <span className="text-xs text-slate-500 font-bold uppercase">
               {profile.xp} XP
             </span>
@@ -140,9 +146,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
           )}
         </div>
 
-        <div className="text-right text-xs text-slate-500 font-bold uppercase">
-          <div>LOGIN: {profile.consecutiveLogins}</div>
-          <div>LINK: {profile.stats.linksCreated}</div>
+        <div className="text-right space-y-1">
+          <CoinDisplay currency={currency} />
+          <div className="text-xs text-slate-500 font-bold uppercase space-y-0.5">
+            <div>LOGIN: {profile.consecutiveLogins}</div>
+            <div>LINK: {profile.stats.linksCreated}</div>
+          </div>
         </div>
       </div>
     </div>

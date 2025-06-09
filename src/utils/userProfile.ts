@@ -1,4 +1,3 @@
-
 export interface UserProfile {
   id: string;
   username: string;
@@ -20,7 +19,7 @@ export interface Mission {
   id: string;
   name: string;
   description: string;
-  type: 'links' | 'login' | 'style' | 'description' | 'colors';
+  type: 'links' | 'login' | 'style' | 'description' | 'colors' | 'youtube' | 'social' | 'speed';
   target: number;
   reward: number; // XP reward
   completed: boolean;
@@ -87,6 +86,36 @@ export const DEFAULT_MISSIONS: Mission[] = [
     type: 'colors',
     target: 5,
     reward: 45,
+    completed: false,
+    progress: 0,
+  },
+  {
+    id: 'youtube-lover',
+    name: 'Amante di YouTube',
+    description: 'Aggiungi 3 link di YouTube',
+    type: 'youtube',
+    target: 3,
+    reward: 30,
+    completed: false,
+    progress: 0,
+  },
+  {
+    id: 'social-master',
+    name: 'Social Master',
+    description: 'Aggiungi link di 5 social diversi',
+    type: 'social',
+    target: 5,
+    reward: 80,
+    completed: false,
+    progress: 0,
+  },
+  {
+    id: 'speed-builder',
+    name: 'Costruttore Veloce',
+    description: 'Crea 3 link in meno di 5 minuti',
+    type: 'speed',
+    target: 3,
+    reward: 100,
     completed: false,
     progress: 0,
   },

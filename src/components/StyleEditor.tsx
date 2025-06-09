@@ -19,10 +19,10 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
     { value: 'dashed', label: 'TRATTEGGIATO', effect: false },
     { value: 'dotted', label: 'PUNTINATO', effect: false },
     { value: 'double', label: 'DOPPIO', effect: false },
-    { value: 'oro-colante', label: '🔥 ORO COLANTE', effect: true },
-    { value: 'argento-colante', label: '❄️ ARGENTO COLANTE', effect: true },
-    { value: 'bronzo-colante', label: '🔥🟤 BRONZO COLANTE', effect: true },
-    { value: 'lava-colante', label: '🌋 LAVA COLANTE', effect: true },
+    { value: 'oro-colante', label: '🔥 ORO', effect: true },
+    { value: 'argento-colante', label: '❄️ ARGENTO', effect: true },
+    { value: 'bronzo-colante', label: '🟤 BRONZO', effect: true },
+    { value: 'lava-colante', label: '🌋 LAVA', effect: true },
     { value: 'diamanti-luccicanti', label: '💎 DIAMANTI', effect: true },
     { value: 'lego-border', label: '🧱 LEGO', effect: true },
   ] as const;
@@ -146,7 +146,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
             </div>
           </div>
 
-          {/* Border Style */}
+          {/* Border Style - Ridotto */}
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider text-center">
               STILE BORDO
@@ -157,22 +157,22 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
                   key={borderStyle.value}
                   type="button"
                   onClick={() => updateStyle('borderStyle', borderStyle.value)}
-                  className={`p-3 rounded-xl border-2 text-sm font-bold uppercase transition-all hover:scale-[1.02] ${
+                  className={`p-2 rounded-xl border-2 text-xs font-bold uppercase transition-all hover:scale-[1.02] ${
                     style.borderStyle === borderStyle.value
                       ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-md shadow-blue-200/30'
                       : 'border-slate-200/60 text-slate-600 hover:border-slate-300/80 bg-white/50'
                   }`}
                 >
-                  <div className="mb-2 text-center text-xs">{borderStyle.label}</div>
+                  <div className="mb-1 text-center">{borderStyle.label}</div>
                   <div 
-                    className={`w-full h-2 bg-slate-400 mx-auto transition-all ${
+                    className={`w-8 h-1 bg-slate-400 mx-auto transition-all ${
                       borderStyle.effect ? getBorderClass(borderStyle.value) : ''
                     }`}
                     style={{ 
                       borderStyle: borderStyle.effect ? 'solid' : borderStyle.value, 
-                      borderWidth: '2px', 
-                      borderColor: borderStyle.effect ? 'transparent' : '#64748b',
-                      height: borderStyle.effect ? '16px' : '8px'
+                      borderWidth: '1px', 
+                      borderColor: borderStyle.effect ? 'transparent' : style.borderColor,
+                      backgroundColor: borderStyle.effect ? 'transparent' : style.borderColor
                     }}
                   />
                 </button>
