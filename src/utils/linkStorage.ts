@@ -1,3 +1,4 @@
+
 export interface LinkItem {
   id: string;
   name: string;
@@ -6,7 +7,7 @@ export interface LinkItem {
   style: {
     borderColor: string;
     borderWidth: number;
-    borderStyle: 'solid' | 'dashed' | 'dotted' | 'double';
+    borderStyle: 'solid' | 'dashed' | 'dotted' | 'double' | 'oro-colante' | 'argento-colante' | 'bronzo-colante' | 'lava-colante' | 'diamanti-luccicanti' | 'lego-border';
     outline?: string; // Nuovo campo per gli outline
   };
 }

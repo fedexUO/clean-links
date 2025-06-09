@@ -22,6 +22,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
     { value: 'oro-colante', label: '🔥 ORO COLANTE', effect: true },
     { value: 'argento-colante', label: '❄️ ARGENTO COLANTE', effect: true },
     { value: 'bronzo-colante', label: '🔥🟤 BRONZO COLANTE', effect: true },
+    { value: 'lava-colante', label: '🌋 LAVA COLANTE', effect: true },
     { value: 'diamanti-luccicanti', label: '💎 DIAMANTI', effect: true },
     { value: 'lego-border', label: '🧱 LEGO', effect: true },
   ] as const;
@@ -37,6 +38,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
       'oro-colante': 'oro-colante',
       'argento-colante': 'argento-colante',
       'bronzo-colante': 'bronzo-colante',
+      'lava-colante': 'lava-colante',
       'diamanti-luccicanti': 'diamanti-luccicanti',
       'lego-border': 'lego-border'
     };
