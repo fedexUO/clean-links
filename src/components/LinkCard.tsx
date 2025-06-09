@@ -12,11 +12,6 @@ interface LinkCardProps {
 
 const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, onStyleEdit }) => {
   const handleClick = () => {
-    // Audio click leggero
-    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiN0vHNfS4FJHPCrdqVSQ0PVgA');
-    audio.volume = 0.1;
-    audio.play().catch(() => {});
-    
     window.open(link.url, '_blank', 'noopener,noreferrer');
   };
 
@@ -48,7 +43,7 @@ const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, onStyleEdit
   return (
     <div className="group relative">
       <div
-        className={`bg-white/80 backdrop-blur-xl rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100/50 link-box ${borderClass} ${isYouTube ? 'youtube-premium' : ''}`}
+        className={`bg-white/80 backdrop-blur-xl rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-[1.02] border border-slate-100/50 lego-box ${borderClass} ${isYouTube ? 'youtube-premium' : ''}`}
         style={borderStyle}
         onClick={handleClick}
       >
