@@ -19,6 +19,7 @@ import {
   saveMissions,
   calculateLevel
 } from '../utils/userProfile';
+import { Currency, loadCurrency, saveCurrency, addCoins } from '../utils/currency';
 
 const Index = () => {
   const [links, setLinks] = useState<LinkItem[]>([]);
@@ -31,6 +32,7 @@ const Index = () => {
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [title, setTitle] = useState('I MIEI LINK');
   const [userProfile, setUserProfile] = useState<UserProfileType | null>(null);
+  const [currency, setCurrency] = useState<Currency>({ coins: 0 });
   const [missions, setMissions] = useState<Mission[]>([]);
   const [usernameInput, setUsernameInput] = useState('');
   const [currentBackground, setCurrentBackground] = useState(1);
@@ -48,6 +50,9 @@ const Index = () => {
     const profile = loadUserProfile();
     setUserProfile(profile);
     setUsernameInput(profile.username);
+
+    const savedCurrency = loadCurrency();
+    setCurrency(savedCurrency);
 
     const savedMissions = loadMissions();
     setMissions(savedMissions);
@@ -154,6 +159,14 @@ const Index = () => {
       updatedProfile.xp += xpGained;
       const oldLevel = updatedProfile.level;
       updatedProfile.level = calculateLevel(updatedProfile.xp);
+      
+      // Add coins for level up
+      if (oldLevel !== updatedProfile.level) {
+        const levelCoins = { bronzo: 0, argento: 20, oro: 50, diamante: 100 };
+        const coinsEarned = levelCoins[updatedProfile.level];
+        const updatedCurrency = addCoins(coinsEarned, `Level up: ${updatedProfile.level}`);
+        setCurrency(updatedCurrency);
+      }
       
       setUserProfile(updatedProfile);
       setMissions(updatedMissions);
@@ -290,7 +303,7 @@ const Index = () => {
 
   return (
     <>
-      <div className={`min-h-screen ${getBackgroundClass()}`} style={getBackgroundStyle()}>
+      <div className="min-h-screen animated-background">
         {/* Header */}
         <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-10">
           <div className="max-w-4xl mx-auto px-4 py-6">
@@ -299,6 +312,7 @@ const Index = () => {
               <div className="mb-6">
                 <UserProfile
                   profile={userProfile}
+                  currency={currency}
                   onEditAvatar={() => setShowAvatarSelector(true)}
                   onEditUsername={() => setShowUsernameEditor(true)}
                 />
