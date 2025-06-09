@@ -15,28 +15,31 @@ const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, onStyleEdit
     window.open(link.url, '_blank', 'noopener,noreferrer');
   };
 
-  const getOutlineClass = (outlineType: string) => {
-    switch (outlineType) {
-      case 'bronzo': return 'ring-2 ring-amber-400/60 ring-offset-2';
-      case 'argento': return 'ring-2 ring-slate-400/60 ring-offset-2';
-      case 'oro': return 'ring-2 ring-yellow-400/60 ring-offset-2';
-      case 'diamante': return 'ring-2 ring-blue-400/60 ring-offset-2 shadow-lg shadow-blue-200/40';
-      default: return '';
-    }
+  const getBorderClass = (borderType: string) => {
+    const effectClasses = {
+      'oro-colante': 'oro-colante',
+      'argento-colante': 'argento-colante',
+      'bronzo-colante': 'bronzo-colante',
+      'diamanti-luccicanti': 'diamanti-luccicanti',
+      'lego-border': 'lego-border'
+    };
+    return effectClasses[borderType as keyof typeof effectClasses] || '';
   };
 
-  const borderStyle = {
+  const isEffectBorder = ['oro-colante', 'argento-colante', 'bronzo-colante', 'diamanti-luccicanti', 'lego-border'].includes(link.style.borderStyle);
+
+  const borderStyle = isEffectBorder ? {} : {
     borderWidth: `${link.style.borderWidth}px`,
     borderColor: link.style.borderColor,
     borderStyle: link.style.borderStyle,
   };
 
-  const outlineClass = link.style.outline ? getOutlineClass(link.style.outline) : '';
+  const borderClass = isEffectBorder ? getBorderClass(link.style.borderStyle) : '';
 
   return (
     <div className="group relative">
       <div
-        className={`bg-white/80 backdrop-blur-xl rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-[1.02] border border-slate-100/50 ${outlineClass}`}
+        className={`bg-white/80 backdrop-blur-xl rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-[1.02] border border-slate-100/50 ${borderClass}`}
         style={borderStyle}
         onClick={handleClick}
       >

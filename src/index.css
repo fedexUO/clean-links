@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -113,116 +112,255 @@
     @apply w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 cursor-pointer shadow-lg border-0;
   }
 
-  /* Animazioni outline */
-  .bronzo-animation {
+  /* Oro Colante Animation */
+  .oro-colante {
     position: relative;
     overflow: hidden;
   }
 
-  .bronzo-animation::before {
+  .oro-colante::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(180deg, 
+      #FFD700 0%, 
+      #FFA500 20%, 
+      #FFB347 40%, 
+      #FFDB58 60%, 
+      #FFD700 80%, 
+      #B8860B 100%
+    );
+    background-size: 100% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: oro-colante-flow 4s ease-in-out infinite;
+    filter: blur(0.5px);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+
+  .oro-colante::after {
     content: '';
     position: absolute;
     top: -2px;
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, #d97706, #f59e0b, #d97706);
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    border-radius: inherit;
+    z-index: -1;
+    animation: oro-shine 3s ease-in-out infinite;
+  }
+
+  @keyframes oro-colante-flow {
+    0%, 100% { background-position: 0% 0%; }
+    50% { background-position: 0% 100%; }
+  }
+
+  @keyframes oro-shine {
+    0%, 100% { transform: translateX(-100%) skewX(-15deg); }
+    50% { transform: translateX(200%) skewX(-15deg); }
+  }
+
+  /* Argento Colante Animation */
+  .argento-colante {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .argento-colante::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(180deg, 
+      #C0C0C0 0%, 
+      #A8A8A8 20%, 
+      #D3D3D3 40%, 
+      #E5E5E5 60%, 
+      #C0C0C0 80%, 
+      #808080 100%
+    );
+    background-size: 100% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: argento-colante-flow 3.5s ease-in-out infinite;
+    filter: blur(0.3px);
+    box-shadow: 0 0 15px rgba(192, 192, 192, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.5);
+  }
+
+  .argento-colante::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    border-radius: inherit;
+    z-index: -1;
+    animation: argento-shine 2.5s ease-in-out infinite;
+  }
+
+  @keyframes argento-colante-flow {
+    0%, 100% { background-position: 0% 0%; }
+    50% { background-position: 0% 100%; }
+  }
+
+  @keyframes argento-shine {
+    0%, 100% { transform: translateX(-100%) skewX(-10deg); }
+    50% { transform: translateX(200%) skewX(-10deg); }
+  }
+
+  /* Bronzo Colante Animation */
+  .bronzo-colante {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bronzo-colante::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(180deg, 
+      #CD7F32 0%, 
+      #B87333 25%, 
+      #A0522D 50%, 
+      #D2691E 75%, 
+      #CD7F32 100%
+    );
+    background-size: 100% 150%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: bronzo-colante-flow 5s ease-in-out infinite;
+    filter: blur(0.4px);
+    box-shadow: 0 0 18px rgba(205, 127, 50, 0.7), inset 0 0 18px rgba(255, 140, 0, 0.3);
+  }
+
+  @keyframes bronzo-colante-flow {
+    0%, 100% { background-position: 0% 0%; }
+    30% { background-position: 0% 70%; }
+    70% { background-position: 0% 30%; }
+  }
+
+  /* Diamanti Luccicanti Animation */
+  .diamanti-luccicanti {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diamanti-luccicanti::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(45deg, 
+      #E0E6ED 0%, 
+      #FFFFFF 25%, 
+      #B8E6FF 50%, 
+      #FFFFFF 75%, 
+      #E0E6ED 100%
+    );
     background-size: 200% 200%;
     border-radius: inherit;
     z-index: -1;
-    animation: bronzo-flow 3s ease-in-out infinite;
+    animation: diamanti-sparkle 2s ease-in-out infinite;
+    box-shadow: 0 0 25px rgba(224, 230, 237, 0.9), inset 0 0 25px rgba(255, 255, 255, 0.8);
   }
 
-  @keyframes bronzo-flow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .argento-animation {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .argento-animation::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #64748b, #cbd5e1, #64748b);
-    background-size: 200% 200%;
-    border-radius: inherit;
-    z-index: -1;
-    animation: argento-flow 2.5s ease-in-out infinite;
-  }
-
-  @keyframes argento-flow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .oro-animation {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .oro-animation::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #eab308, #fbbf24, #eab308);
-    background-size: 200% 200%;
-    border-radius: inherit;
-    z-index: -1;
-    animation: oro-flow 2s ease-in-out infinite;
-  }
-
-  @keyframes oro-flow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .diamante-animation {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .diamante-animation::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #2563eb, #60a5fa, #93c5fd, #60a5fa, #2563eb);
-    background-size: 300% 300%;
-    border-radius: inherit;
-    z-index: -1;
-    animation: diamante-sparkle 1.5s ease-in-out infinite;
-  }
-
-  .diamante-animation::after {
-    content: '💎';
+  .diamanti-luccicanti::after {
+    content: '💎 ✨ 💎';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 8px;
-    animation: sparkle 2s ease-in-out infinite;
+    animation: diamanti-float 3s ease-in-out infinite;
     z-index: 1;
+    pointer-events: none;
   }
 
-  @keyframes diamante-sparkle {
+  @keyframes diamanti-sparkle {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
   }
 
-  @keyframes sparkle {
-    0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  @keyframes diamanti-float {
+    0%, 100% { 
+      opacity: 0.7; 
+      transform: translate(-50%, -50%) scale(0.8) rotate(0deg); 
+    }
+    50% { 
+      opacity: 1; 
+      transform: translate(-50%, -50%) scale(1.2) rotate(180deg); 
+    }
+  }
+
+  /* LEGO Border Animation */
+  .lego-border {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lego-border::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: 
+      linear-gradient(90deg, 
+        #FF0000 0%, #FF0000 20%, 
+        #0066CC 20%, #0066CC 40%, 
+        #FFFF00 40%, #FFFF00 60%, 
+        #00AA00 60%, #00AA00 80%, 
+        #FF6600 80%, #FF6600 100%
+      );
+    background-size: 40px 100%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: lego-slide 4s linear infinite;
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.5),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .lego-border::after {
+    content: '🧱';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    animation: lego-click 2s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  @keyframes lego-slide {
+    0% { background-position: 0px 0; }
+    100% { background-position: 40px 0; }
+  }
+
+  @keyframes lego-click {
+    0%, 100% { 
+      opacity: 0.6; 
+      transform: translate(-50%, -50%) scale(0.8); 
+    }
+    50% { 
+      opacity: 1; 
+      transform: translate(-50%, -50%) scale(1.1); 
+    }
   }
 }
