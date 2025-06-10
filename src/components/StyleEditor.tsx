@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Palette, X } from 'lucide-react';
+import { Palette, X, ChevronDown, Plus } from 'lucide-react';
 import { LinkItem } from '../utils/linkStorage';
 import { UserProfile } from '../utils/userProfile';
 
@@ -13,19 +13,29 @@ interface StyleEditorProps {
 
 const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
   const [style, setStyle] = useState(link.style);
+  const [expandedSection, setExpandedSection] = useState<string | null>('color');
+  const [showCustomColorPicker, setShowCustomColorPicker] = useState(false);
+
+  const predefinedColors = [
+    // Neutri
+    '#64748B', '#374151', '#1F2937', '#111827',
+    // Brand comuni  
+    '#3B82F6', '#10B981', '#EF4444', '#F59E0B',
+    // Creativi
+    '#8B5CF6', '#EC4899', '#F97316', '#06B6D4'
+  ];
 
   const borderStyles = [
-    { value: 'solid', label: 'SOLIDO', effect: false },
-    { value: 'dashed', label: 'TRATTEGGIATO', effect: false },
-    { value: 'dotted', label: 'PUNTINATO', effect: false },
-    { value: 'double', label: 'DOPPIO', effect: false },
-    { value: 'oro-colante', label: '🔥 ORO COLANTE', effect: true },
-    { value: 'argento-colante', label: '❄️ ARGENTO COLANTE', effect: true },
-    { value: 'bronzo-colante', label: '🔥🟤 BRONZO COLANTE', effect: true },
-    { value: 'lava-colante', label: '🌋 LAVA COLANTE', effect: true },
-    { value: 'diamanti-luccicanti', label: '💎 DIAMANTI', effect: true },
-    { value: 'lego-border', label: '🧱 LEGO', effect: true },
+    { value: 'solid', label: 'SOLIDO' },
+    { value: 'dashed', label: 'TRATTEGGIATO' },
+    { value: 'dotted', label: 'PUNTINATO' },
+    { value: 'oro-colante', label: '🔥 ORO' },
+    { value: 'argento-colante', label: '❄️ ARGENTO' },
+    { value: 'bronzo-colante', label: '🟤 BRONZO' },
+    { value: 'diamanti-luccicanti', label: '💎 DIAMANTE' },
   ] as const;
+
+  const borderWidthPresets = [1, 2, 4, 6, 8];
 
   const updateStyle = (field: keyof LinkItem['style'], value: any) => {
     const newStyle = { ...style, [field]: value };
@@ -45,138 +55,167 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
     return effectClasses[borderType as keyof typeof effectClasses] || '';
   };
 
-  const ColorWheel = () => {
-    const colors = [
-      '#FF0000', '#FF4500', '#FF8C00', '#FFD700', '#ADFF2F',
-      '#00FF00', '#00FA9A', '#00CED1', '#00BFFF', '#0000FF',
-      '#8A2BE2', '#9400D3', '#FF00FF', '#FF1493', '#DC143C'
-    ];
-
-    return (
-      <div className="flex justify-center">
-        <div className="relative w-32 h-32">
-          {colors.map((color, index) => {
-            const angle = (index * 360) / colors.length;
-            const radius = 50;
-            const x = Math.cos((angle * Math.PI) / 180) * radius;
-            const y = Math.sin((angle * Math.PI) / 180) * radius;
-            
-            return (
-              <button
-                key={color}
-                onClick={() => updateStyle('borderColor', color)}
-                className={`absolute w-6 h-6 rounded-full border-2 transition-all hover:scale-125 ${
-                  style.borderColor === color ? 'border-slate-800 ring-2 ring-slate-300' : 'border-white'
-                }`}
-                style={{
-                  backgroundColor: color,
-                  left: `calc(50% + ${x}px - 12px)`,
-                  top: `calc(50% + ${y}px - 12px)`,
-                }}
-              />
-            );
-          })}
-          {/* Centro della ruota */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border-2 border-slate-300"></div>
-        </div>
-      </div>
-    );
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section);
   };
 
+  const SectionHeader = ({ title, isExpanded, onClick }: { title: string; isExpanded: boolean; onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center justify-between p-3 bg-slate-50/70 hover:bg-slate-100/70 rounded-xl transition-all duration-150 group"
+    >
+      <span className="text-sm font-medium text-slate-700 uppercase tracking-wide">{title}</span>
+      <ChevronDown 
+        size={16} 
+        className={`text-slate-500 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+      />
+    </button>
+  );
+
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-white/30">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100/70 rounded-2xl">
-              <Palette className="text-purple-600" size={20} />
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white/95 backdrop-blur-xl rounded-2xl w-full max-w-md shadow-xl border border-white/20 max-h-[85vh] overflow-hidden">
+        {/* Header compatto */}
+        <div className="flex items-center justify-between p-4 border-b border-slate-100/50">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-purple-100/70 rounded-lg">
+              <Palette className="text-purple-600" size={16} />
             </div>
-            <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider text-center">PERSONALIZZA STILE</h2>
+            <h2 className="text-base font-medium text-slate-800 uppercase tracking-wide">Personalizza Stile</h2>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100/70 rounded-full"
+            className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 hover:bg-slate-100/70 rounded-lg"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Anteprima compatta */}
-        <div className="mb-6 p-3 bg-slate-50/70 rounded-2xl">
-          <p className="text-xs text-slate-500 mb-2 uppercase font-bold text-center">ANTEPRIMA:</p>
-          <div
-            className={`bg-white/90 p-3 rounded-xl transition-all duration-300 ${getBorderClass(style.borderStyle)}`}
-            style={{
-              borderWidth: `${style.borderWidth}px`,
-              borderColor: style.borderColor,
-              borderStyle: borderStyles.find(b => b.value === style.borderStyle)?.effect ? 'solid' : style.borderStyle,
-            }}
-          >
-            <h3 className="font-bold text-slate-800 text-sm uppercase text-center">{link.name}</h3>
-            <p className="text-slate-500 text-xs mt-1 uppercase text-center">{link.description || link.url}</p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {/* Color Wheel */}
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider text-center">
-              COLORE BORDO
-            </label>
-            <ColorWheel />
-          </div>
-
-          {/* Border Width */}
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider text-center">
-              SPESSORE: {style.borderWidth}PX
-            </label>
-            <input
-              type="range"
-              min="1"
-              max="8"
-              value={style.borderWidth}
-              onChange={(e) => updateStyle('borderWidth', parseInt(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
-            />
-            <div className="flex justify-between text-xs text-slate-400 mt-1 font-bold uppercase">
-              <span>1PX</span>
-              <span>8PX</span>
+        <div className="overflow-y-auto max-h-[calc(85vh-80px)]">
+          {/* Anteprima compatta sempre visibile */}
+          <div className="p-4 border-b border-slate-100/50">
+            <div
+              className={`bg-white/90 p-3 rounded-lg transition-all duration-200 ${getBorderClass(style.borderStyle)}`}
+              style={{
+                borderWidth: `${style.borderWidth}px`,
+                borderColor: style.borderColor,
+                borderStyle: borderStyles.find(b => b.value === style.borderStyle)?.value.includes('-') ? 'solid' : style.borderStyle,
+              }}
+            >
+              <h3 className="font-semibold text-slate-800 text-sm text-center">{link.name}</h3>
+              <p className="text-slate-500 text-xs mt-1 text-center truncate">{link.description || link.url}</p>
             </div>
           </div>
 
-          {/* Border Style */}
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider text-center">
-              STILE BORDO
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {borderStyles.map((borderStyle) => (
-                <button
-                  key={borderStyle.value}
-                  type="button"
-                  onClick={() => updateStyle('borderStyle', borderStyle.value)}
-                  className={`p-3 rounded-xl border-2 text-sm font-bold uppercase transition-all hover:scale-[1.02] ${
-                    style.borderStyle === borderStyle.value
-                      ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-md shadow-blue-200/30'
-                      : 'border-slate-200/60 text-slate-600 hover:border-slate-300/80 bg-white/50'
-                  }`}
-                >
-                  <div className="mb-2 text-center text-xs">{borderStyle.label}</div>
-                  <div 
-                    className={`w-full h-2 bg-slate-400 mx-auto transition-all ${
-                      borderStyle.effect ? getBorderClass(borderStyle.value) : ''
-                    }`}
-                    style={{ 
-                      borderStyle: borderStyle.effect ? 'solid' : borderStyle.value, 
-                      borderWidth: '2px', 
-                      borderColor: borderStyle.effect ? 'transparent' : '#64748b',
-                      height: borderStyle.effect ? '16px' : '8px'
-                    }}
-                  />
-                </button>
-              ))}
+          <div className="p-4 space-y-3">
+            {/* Sezione Colore */}
+            <div>
+              <SectionHeader 
+                title="Colore Bordo" 
+                isExpanded={expandedSection === 'color'} 
+                onClick={() => toggleSection('color')} 
+              />
+              {expandedSection === 'color' && (
+                <div className="mt-3 space-y-3">
+                  <div className="grid grid-cols-4 gap-2">
+                    {predefinedColors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => updateStyle('borderColor', color)}
+                        className={`w-full aspect-square rounded-md border-2 transition-all duration-150 hover:scale-105 ${
+                          style.borderColor === color ? 'border-slate-700 ring-2 ring-slate-300/50' : 'border-white shadow-sm'
+                        }`}
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setShowCustomColorPicker(!showCustomColorPicker)}
+                    className="w-full p-2 border-2 border-dashed border-slate-300 rounded-md hover:border-slate-400 transition-colors duration-150 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-700"
+                  >
+                    <Plus size={16} />
+                    <span className="text-sm font-medium">Colore Custom</span>
+                  </button>
+                  {showCustomColorPicker && (
+                    <input
+                      type="color"
+                      value={style.borderColor}
+                      onChange={(e) => updateStyle('borderColor', e.target.value)}
+                      className="w-full h-10 rounded-md border border-slate-200 cursor-pointer"
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Sezione Spessore */}
+            <div>
+              <SectionHeader 
+                title={`Spessore: ${style.borderWidth}px`}
+                isExpanded={expandedSection === 'width'} 
+                onClick={() => toggleSection('width')} 
+              />
+              {expandedSection === 'width' && (
+                <div className="mt-3">
+                  <div className="flex justify-between gap-2">
+                    {borderWidthPresets.map((width) => (
+                      <button
+                        key={width}
+                        onClick={() => updateStyle('borderWidth', width)}
+                        className={`flex-1 p-2 rounded-lg border transition-all duration-150 hover:scale-105 ${
+                          style.borderWidth === width 
+                            ? 'border-blue-500 bg-blue-50/70 text-blue-700' 
+                            : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className="text-xs font-medium">{width}px</div>
+                        <div 
+                          className="w-full bg-current mt-1 rounded-sm" 
+                          style={{ height: `${Math.max(width, 2)}px` }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Sezione Stile */}
+            <div>
+              <SectionHeader 
+                title="Stile Bordo" 
+                isExpanded={expandedSection === 'style'} 
+                onClick={() => toggleSection('style')} 
+              />
+              {expandedSection === 'style' && (
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {borderStyles.map((borderStyle) => (
+                    <button
+                      key={borderStyle.value}
+                      type="button"
+                      onClick={() => updateStyle('borderStyle', borderStyle.value)}
+                      className={`p-3 rounded-lg border transition-all duration-150 hover:scale-[1.02] ${
+                        style.borderStyle === borderStyle.value
+                          ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-sm'
+                          : 'border-slate-200 text-slate-600 hover:border-slate-300 bg-white/50'
+                      }`}
+                    >
+                      <div className="text-xs font-medium mb-2 text-center">{borderStyle.label}</div>
+                      <div 
+                        className={`w-full h-3 bg-slate-400 transition-all ${
+                          borderStyle.value.includes('-') ? getBorderClass(borderStyle.value) : ''
+                        }`}
+                        style={{ 
+                          borderStyle: borderStyle.value.includes('-') ? 'solid' : borderStyle.value, 
+                          borderWidth: '2px', 
+                          borderColor: borderStyle.value.includes('-') ? 'transparent' : '#64748b',
+                          height: borderStyle.value.includes('-') ? '12px' : '8px'
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
