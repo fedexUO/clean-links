@@ -273,39 +273,32 @@ const Index = () => {
 
   const getBackgroundClass = () => {
     const backgrounds = [
-      // Statico
+      'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50',
+      'bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50',
       'bg-gradient-to-br from-orange-50 via-red-50 to-pink-50',
-      
-      // Fase 1 - Essenziali
-      'bg-black matrix-rain-bg',
-      'bg-slate-900 tron-grid-bg',
-      'bg-slate-900 starfield-warp-bg',
-      'bg-green-900 binary-rain-bg',
-      
-      // Fase 2 - Popolari
-      'bg-blue-900 neural-network-bg',
-      'bg-gradient-to-b from-purple-900 via-pink-900 to-orange-900 synthwave-sunset-bg',
-      'bg-cyan-900 pixel-rain-bg',
-      'bg-red-900 glitch-effect-bg',
-      
-      // Fase 3 - Avanzati
-      'bg-purple-900 plasma-waves-bg',
-      'bg-indigo-900 geometric-mandala-bg',
-      'bg-slate-900 particle-constellation-bg',
-      'bg-green-900 code-stream-bg'
+      'bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50',
+      'bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50'
     ];
     return backgrounds[currentBackground - 1] || backgrounds[0];
   };
 
   const getBackgroundStyle = () => {
     const styles = [
-      // Statico
+      {
+        backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)'
+      },
+      {
+        backgroundImage: 'radial-gradient(ellipse at 25% 25%, rgba(59, 130, 246, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 75% 75%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)'
+      },
       {
         backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(251, 146, 60, 0.25) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.25) 0%, transparent 60%)'
       },
-      
-      // Animati - gli stili CSS saranno gestiti tramite classi CSS
-      {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+      {
+        backgroundImage: 'radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.2) 0%, transparent 50%)'
+      },
+      {
+        backgroundImage: 'radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.25) 0%, transparent 50%)'
+      }
     ];
     return styles[currentBackground - 1] || styles[0];
   };
