@@ -90,7 +90,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
       className="w-full flex items-center justify-between p-2.5 bg-slate-50/70 hover:bg-slate-100/70 rounded-xl transition-all duration-150 group"
     >
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-slate-700 tracking-wide">{title}</span>
+        <span className="text-sm font-medium text-slate-700">{title}</span>
         {!isExpanded && indicator && (
           <div className="flex items-center gap-1">
             {indicator}
@@ -107,13 +107,13 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white/95 backdrop-blur-xl rounded-2xl w-full max-w-sm shadow-xl border border-white/20 max-h-[80vh] overflow-hidden">
-        {/* Header compatto */}
+        {/* Header */}
         <div className="flex items-center justify-between p-3 border-b border-slate-100/50">
           <div className="flex items-center gap-2">
             <div className="p-1.5 bg-purple-100/70 rounded-lg">
               <Palette className="text-purple-600" size={14} />
             </div>
-            <h2 className="text-sm font-medium text-slate-800 tracking-wide">Personalizza stile</h2>
+            <h2 className="text-sm font-medium text-slate-800">Personalizza stile</h2>
           </div>
           <button
             onClick={onClose}
@@ -124,7 +124,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
         </div>
 
         <div className="overflow-y-auto max-h-[calc(80vh-60px)]">
-          {/* Anteprima compatta sempre visibile */}
+          {/* Anteprima */}
           <div className="p-3 border-b border-slate-100/50">
             <div
               className={`bg-white/90 p-2.5 rounded-lg transition-all duration-200 ${getBorderClass(style.borderStyle)}`}
@@ -258,11 +258,12 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
                       >
                         <div className="text-xs font-medium mb-1.5 text-center">{borderStyle.label}</div>
                         <div 
-                          className="w-full h-2 bg-slate-400"
+                          className="w-full h-2"
                           style={{ 
                             borderStyle: borderStyle.value, 
                             borderWidth: '1px', 
-                            borderColor: '#64748b'
+                            borderColor: style.borderColor,
+                            backgroundColor: 'transparent'
                           }}
                         />
                       </button>
@@ -295,11 +296,12 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
                         >
                           <div className="text-xs font-medium mb-1.5 text-center">{borderStyle.label}</div>
                           <div 
-                            className={`w-full h-2 bg-slate-400 transition-all ${getBorderClass(borderStyle.value)}`}
+                            className={`w-full h-2 transition-all ${getBorderClass(borderStyle.value)}`}
                             style={{ 
                               borderStyle: 'solid', 
-                              borderWidth: '1px', 
-                              borderColor: 'transparent',
+                              borderWidth: '2px', 
+                              borderColor: style.borderColor,
+                              backgroundColor: 'transparent'
                             }}
                           />
                         </button>

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -250,7 +251,7 @@
     70% { background-position: 0% 30%; }
   }
 
-  /* Diamanti Luccicanti Animation */
+  /* Diamanti Luccicanti Animation - REMOVED EMOJIS */
   .diamanti-luccicanti {
     position: relative;
     overflow: hidden;
@@ -277,32 +278,9 @@
     box-shadow: 0 0 25px rgba(224, 230, 237, 0.9), inset 0 0 25px rgba(255, 255, 255, 0.8);
   }
 
-  .diamanti-luccicanti::after {
-    content: '💎 ✨ 💎';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 8px;
-    animation: diamanti-float 3s ease-in-out infinite;
-    z-index: 1;
-    pointer-events: none;
-  }
-
   @keyframes diamanti-sparkle {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
-  }
-
-  @keyframes diamanti-float {
-    0%, 100% { 
-      opacity: 0.7; 
-      transform: translate(-50%, -50%) scale(0.8) rotate(0deg); 
-    }
-    50% { 
-      opacity: 1; 
-      transform: translate(-50%, -50%) scale(1.2) rotate(180deg); 
-    }
   }
 
   /* LEGO Border Animation */
