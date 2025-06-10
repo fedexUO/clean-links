@@ -15,6 +15,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
   const [style, setStyle] = useState(link.style);
   const [expandedSection, setExpandedSection] = useState<string | null>('color');
   const [showCustomColorPicker, setShowCustomColorPicker] = useState(false);
+  const [showAdvancedStyles, setShowAdvancedStyles] = useState(false);
 
   const predefinedColors = [
     // Neutri
@@ -25,14 +26,33 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
     '#8B5CF6', '#EC4899', '#F97316', '#06B6D4'
   ];
 
-  const borderStyles = [
-    { value: 'solid', label: 'SOLIDO' },
-    { value: 'dashed', label: 'TRATTEGGIATO' },
-    { value: 'dotted', label: 'PUNTINATO' },
-    { value: 'oro-colante', label: '🔥 ORO' },
-    { value: 'argento-colante', label: '❄️ ARGENTO' },
-    { value: 'bronzo-colante', label: '🟤 BRONZO' },
-    { value: 'diamanti-luccicanti', label: '💎 DIAMANTE' },
+  const colorNames: { [key: string]: string } = {
+    '#64748B': 'Grigio',
+    '#374151': 'Antracite',
+    '#1F2937': 'Carbone',
+    '#111827': 'Nero',
+    '#3B82F6': 'Blu',
+    '#10B981': 'Verde',
+    '#EF4444': 'Rosso',
+    '#F59E0B': 'Arancione',
+    '#8B5CF6': 'Viola',
+    '#EC4899': 'Rosa',
+    '#F97316': 'Mandarino',
+    '#06B6D4': 'Ciano'
+  };
+
+  const basicBorderStyles = [
+    { value: 'solid', label: 'Solido' },
+    { value: 'dashed', label: 'Tratteggiato' },
+    { value: 'dotted', label: 'Puntinato' },
+    { value: 'double', label: 'Doppio' },
+  ] as const;
+
+  const advancedBorderStyles = [
+    { value: 'oro-colante', label: '🔥 Oro' },
+    { value: 'argento-colante', label: '❄️ Argento' },
+    { value: 'bronzo-colante', label: '🟤 Bronzo' },
+    { value: 'diamanti-luccicanti', label: '💎 Diamante' },
   ] as const;
 
   const borderWidthPresets = [1, 2, 4, 6, 8];
@@ -59,12 +79,24 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
-  const SectionHeader = ({ title, isExpanded, onClick }: { title: string; isExpanded: boolean; onClick: () => void }) => (
+  const SectionHeader = ({ title, isExpanded, onClick, indicator }: { 
+    title: string; 
+    isExpanded: boolean; 
+    onClick: () => void;
+    indicator?: React.ReactNode;
+  }) => (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between p-3 bg-slate-50/70 hover:bg-slate-100/70 rounded-xl transition-all duration-150 group"
+      className="w-full flex items-center justify-between p-2.5 bg-slate-50/70 hover:bg-slate-100/70 rounded-xl transition-all duration-150 group"
     >
-      <span className="text-sm font-medium text-slate-700 uppercase tracking-wide">{title}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-slate-700 tracking-wide">{title}</span>
+        {!isExpanded && indicator && (
+          <div className="flex items-center gap-1">
+            {indicator}
+          </div>
+        )}
+      </div>
       <ChevronDown 
         size={16} 
         className={`text-slate-500 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
@@ -74,74 +106,87 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white/95 backdrop-blur-xl rounded-2xl w-full max-w-md shadow-xl border border-white/20 max-h-[85vh] overflow-hidden">
+      <div className="bg-white/95 backdrop-blur-xl rounded-2xl w-full max-w-sm shadow-xl border border-white/20 max-h-[80vh] overflow-hidden">
         {/* Header compatto */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-100/50">
+        <div className="flex items-center justify-between p-3 border-b border-slate-100/50">
           <div className="flex items-center gap-2">
             <div className="p-1.5 bg-purple-100/70 rounded-lg">
-              <Palette className="text-purple-600" size={16} />
+              <Palette className="text-purple-600" size={14} />
             </div>
-            <h2 className="text-base font-medium text-slate-800 uppercase tracking-wide">Personalizza Stile</h2>
+            <h2 className="text-sm font-medium text-slate-800 tracking-wide">Personalizza stile</h2>
           </div>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 hover:bg-slate-100/70 rounded-lg"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
-        <div className="overflow-y-auto max-h-[calc(85vh-80px)]">
+        <div className="overflow-y-auto max-h-[calc(80vh-60px)]">
           {/* Anteprima compatta sempre visibile */}
-          <div className="p-4 border-b border-slate-100/50">
+          <div className="p-3 border-b border-slate-100/50">
             <div
-              className={`bg-white/90 p-3 rounded-lg transition-all duration-200 ${getBorderClass(style.borderStyle)}`}
+              className={`bg-white/90 p-2.5 rounded-lg transition-all duration-200 ${getBorderClass(style.borderStyle)}`}
               style={{
                 borderWidth: `${style.borderWidth}px`,
                 borderColor: style.borderColor,
-                borderStyle: borderStyles.find(b => b.value === style.borderStyle)?.value.includes('-') ? 'solid' : style.borderStyle,
+                borderStyle: [...basicBorderStyles, ...advancedBorderStyles].find(b => b.value === style.borderStyle)?.value.includes('-') ? 'solid' : style.borderStyle,
               }}
             >
-              <h3 className="font-semibold text-slate-800 text-sm text-center">{link.name}</h3>
+              <h3 className="font-semibold text-slate-800 text-xs text-center">{link.name}</h3>
               <p className="text-slate-500 text-xs mt-1 text-center truncate">{link.description || link.url}</p>
             </div>
           </div>
 
-          <div className="p-4 space-y-3">
+          <div className="p-3 space-y-2.5">
             {/* Sezione Colore */}
             <div>
               <SectionHeader 
-                title="Colore Bordo" 
+                title="Colore bordo" 
                 isExpanded={expandedSection === 'color'} 
-                onClick={() => toggleSection('color')} 
+                onClick={() => toggleSection('color')}
+                indicator={
+                  <div 
+                    className="w-3 h-3 rounded border border-white/50 shadow-sm"
+                    style={{ backgroundColor: style.borderColor }}
+                  />
+                }
               />
               {expandedSection === 'color' && (
-                <div className="mt-3 space-y-3">
-                  <div className="grid grid-cols-4 gap-2">
+                <div className="mt-2.5 space-y-2.5">
+                  <div className="grid grid-cols-4 gap-1.5">
                     {predefinedColors.map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => updateStyle('borderColor', color)}
-                        className={`w-full aspect-square rounded-md border-2 transition-all duration-150 hover:scale-105 ${
-                          style.borderColor === color ? 'border-slate-700 ring-2 ring-slate-300/50' : 'border-white shadow-sm'
-                        }`}
-                        style={{ backgroundColor: color }}
-                      />
+                      <div key={color} className="relative group">
+                        <button
+                          onClick={() => updateStyle('borderColor', color)}
+                          className={`w-full aspect-square rounded-lg border-2 transition-all duration-150 hover:scale-105 ${
+                            style.borderColor === color 
+                              ? 'border-slate-600 ring-2 ring-slate-300/50' 
+                              : 'border-white/50 shadow-sm hover:border-slate-300'
+                          }`}
+                          style={{ backgroundColor: color }}
+                          title={colorNames[color] || color}
+                        />
+                        {style.borderColor === color && (
+                          <div className="absolute inset-0 rounded-lg ring-2 ring-blue-500/30 pointer-events-none" />
+                        )}
+                      </div>
                     ))}
                   </div>
                   <button
                     onClick={() => setShowCustomColorPicker(!showCustomColorPicker)}
-                    className="w-full p-2 border-2 border-dashed border-slate-300 rounded-md hover:border-slate-400 transition-colors duration-150 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-700"
+                    className="w-full p-2 border-2 border-dashed border-slate-300 rounded-lg hover:border-slate-400 transition-colors duration-150 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-700"
                   >
-                    <Plus size={16} />
-                    <span className="text-sm font-medium">Colore Custom</span>
+                    <Plus size={14} />
+                    <span className="text-xs font-medium">Personalizzato</span>
                   </button>
                   {showCustomColorPicker && (
                     <input
                       type="color"
                       value={style.borderColor}
                       onChange={(e) => updateStyle('borderColor', e.target.value)}
-                      className="w-full h-10 rounded-md border border-slate-200 cursor-pointer"
+                      className="w-full h-8 rounded-lg border border-slate-200 cursor-pointer"
                     />
                   )}
                 </div>
@@ -151,20 +196,23 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
             {/* Sezione Spessore */}
             <div>
               <SectionHeader 
-                title={`Spessore: ${style.borderWidth}px`}
+                title="Spessore" 
                 isExpanded={expandedSection === 'width'} 
-                onClick={() => toggleSection('width')} 
+                onClick={() => toggleSection('width')}
+                indicator={
+                  <span className="text-xs text-slate-500 font-medium">{style.borderWidth}px</span>
+                }
               />
               {expandedSection === 'width' && (
-                <div className="mt-3">
-                  <div className="flex justify-between gap-2">
+                <div className="mt-2.5">
+                  <div className="flex justify-between gap-1.5">
                     {borderWidthPresets.map((width) => (
                       <button
                         key={width}
                         onClick={() => updateStyle('borderWidth', width)}
                         className={`flex-1 p-2 rounded-lg border transition-all duration-150 hover:scale-105 ${
                           style.borderWidth === width 
-                            ? 'border-blue-500 bg-blue-50/70 text-blue-700' 
+                            ? 'border-blue-500 bg-blue-50/70 text-blue-700 ring-2 ring-blue-200/50' 
                             : 'border-slate-200 text-slate-600 hover:border-slate-300'
                         }`}
                       >
@@ -183,37 +231,81 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ link, onSave, onClose }) => {
             {/* Sezione Stile */}
             <div>
               <SectionHeader 
-                title="Stile Bordo" 
+                title="Stile bordo" 
                 isExpanded={expandedSection === 'style'} 
-                onClick={() => toggleSection('style')} 
+                onClick={() => toggleSection('style')}
+                indicator={
+                  <span className="text-xs text-slate-500 font-medium capitalize">
+                    {basicBorderStyles.find(s => s.value === style.borderStyle)?.label || 
+                     advancedBorderStyles.find(s => s.value === style.borderStyle)?.label || 
+                     'Personalizzato'}
+                  </span>
+                }
               />
               {expandedSection === 'style' && (
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  {borderStyles.map((borderStyle) => (
-                    <button
-                      key={borderStyle.value}
-                      type="button"
-                      onClick={() => updateStyle('borderStyle', borderStyle.value)}
-                      className={`p-3 rounded-lg border transition-all duration-150 hover:scale-[1.02] ${
-                        style.borderStyle === borderStyle.value
-                          ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-sm'
-                          : 'border-slate-200 text-slate-600 hover:border-slate-300 bg-white/50'
-                      }`}
-                    >
-                      <div className="text-xs font-medium mb-2 text-center">{borderStyle.label}</div>
-                      <div 
-                        className={`w-full h-3 bg-slate-400 transition-all ${
-                          borderStyle.value.includes('-') ? getBorderClass(borderStyle.value) : ''
+                <div className="mt-2.5 space-y-2.5">
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {basicBorderStyles.map((borderStyle) => (
+                      <button
+                        key={borderStyle.value}
+                        type="button"
+                        onClick={() => updateStyle('borderStyle', borderStyle.value)}
+                        className={`p-2.5 rounded-lg border transition-all duration-150 hover:scale-[1.02] ${
+                          style.borderStyle === borderStyle.value
+                            ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-sm ring-2 ring-blue-200/50'
+                            : 'border-slate-200 text-slate-600 hover:border-slate-300 bg-white/50'
                         }`}
-                        style={{ 
-                          borderStyle: borderStyle.value.includes('-') ? 'solid' : borderStyle.value, 
-                          borderWidth: '2px', 
-                          borderColor: borderStyle.value.includes('-') ? 'transparent' : '#64748b',
-                          height: borderStyle.value.includes('-') ? '12px' : '8px'
-                        }}
-                      />
-                    </button>
-                  ))}
+                      >
+                        <div className="text-xs font-medium mb-1.5 text-center">{borderStyle.label}</div>
+                        <div 
+                          className="w-full h-2 bg-slate-400"
+                          style={{ 
+                            borderStyle: borderStyle.value, 
+                            borderWidth: '1px', 
+                            borderColor: '#64748b'
+                          }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <button
+                    onClick={() => setShowAdvancedStyles(!showAdvancedStyles)}
+                    className="w-full p-2 border border-slate-200 rounded-lg hover:border-slate-300 transition-colors duration-150 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-700"
+                  >
+                    <span className="text-xs font-medium">Stili avanzati</span>
+                    <ChevronDown 
+                      size={12} 
+                      className={`transition-transform duration-200 ${showAdvancedStyles ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                  
+                  {showAdvancedStyles && (
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {advancedBorderStyles.map((borderStyle) => (
+                        <button
+                          key={borderStyle.value}
+                          type="button"
+                          onClick={() => updateStyle('borderStyle', borderStyle.value)}
+                          className={`p-2.5 rounded-lg border transition-all duration-150 hover:scale-[1.02] ${
+                            style.borderStyle === borderStyle.value
+                              ? 'border-blue-500 bg-blue-50/70 text-blue-700 shadow-sm ring-2 ring-blue-200/50'
+                              : 'border-slate-200 text-slate-600 hover:border-slate-300 bg-white/50'
+                          }`}
+                        >
+                          <div className="text-xs font-medium mb-1.5 text-center">{borderStyle.label}</div>
+                          <div 
+                            className={`w-full h-2 bg-slate-400 transition-all ${getBorderClass(borderStyle.value)}`}
+                            style={{ 
+                              borderStyle: 'solid', 
+                              borderWidth: '1px', 
+                              borderColor: 'transparent',
+                            }}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
