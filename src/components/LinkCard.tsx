@@ -2,6 +2,7 @@
 import React from 'react';
 import { ExternalLink, Edit3, Palette, Trash2 } from 'lucide-react';
 import { LinkItem } from '../utils/linkStorage';
+import { getFaviconUrl } from '../utils/faviconService';
 
 interface LinkCardProps {
   link: LinkItem;
@@ -50,7 +51,19 @@ const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, onStyleEdit
         {/* Link Content */}
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
-            <ExternalLink size={16} className="text-slate-400" />
+            <div className="flex items-center gap-2">
+              <img
+                src={getFaviconUrl(link.url)}
+                alt={`${link.name} favicon`}
+                className="w-4 h-4 rounded-sm"
+                onError={(e) => {
+                  // Se il favicon non carica, mostra l'icona di default
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <ExternalLink size={16} className="text-slate-400 hidden" />
+            </div>
             <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider line-clamp-1">
               {link.name}
             </h3>

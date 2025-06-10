@@ -225,7 +225,22 @@ const Index = () => {
 
   const handleAvatarChange = (avatar: number) => {
     if (userProfile) {
-      const updatedProfile = { ...userProfile, avatar };
+      const updatedProfile = { 
+        ...userProfile, 
+        avatar,
+        customAvatar: undefined // Rimuovi avatar personalizzato quando selezioni uno predefinito
+      };
+      setUserProfile(updatedProfile);
+      saveUserProfile(updatedProfile);
+    }
+  };
+
+  const handleCustomAvatarChange = (customAvatarUrl: string) => {
+    if (userProfile) {
+      const updatedProfile = { 
+        ...userProfile, 
+        customAvatar: customAvatarUrl
+      };
       setUserProfile(updatedProfile);
       saveUserProfile(updatedProfile);
     }
@@ -408,6 +423,8 @@ const Index = () => {
             currentAvatar={userProfile?.avatar || 1}
             onSelect={handleAvatarChange}
             onClose={() => setShowAvatarSelector(false)}
+            customAvatar={userProfile?.customAvatar}
+            onCustomAvatarSelect={handleCustomAvatarChange}
           />
         )}
 

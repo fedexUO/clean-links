@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Edit3 } from 'lucide-react';
 import { UserProfile as UserProfileType, getNextLevelXP } from '../utils/userProfile';
@@ -97,9 +96,17 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onEditAvatar, onEdit
             className="relative block"
           >
             <div
-              className={`w-14 h-14 ${avatar.bg} rounded-full flex items-center justify-center transition-all hover:scale-105 super-circle text-slate-700`}
+              className={`w-14 h-14 ${profile.customAvatar ? '' : avatar.bg} rounded-full flex items-center justify-center transition-all hover:scale-105 super-circle text-slate-700 overflow-hidden`}
             >
-              {avatar.svg}
+              {profile.customAvatar ? (
+                <img
+                  src={profile.customAvatar}
+                  alt="Custom avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                avatar.svg
+              )}
             </div>
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center">
               <Edit3 size={14} className="text-white" />

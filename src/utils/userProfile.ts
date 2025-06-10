@@ -3,6 +3,7 @@ export interface UserProfile {
   id: string;
   username: string;
   avatar: number; // 1-5 per le 5 immagini predefinite
+  customAvatar?: string; // URL dell'immagine personalizzata
   level: 'bronzo' | 'argento' | 'oro' | 'diamante';
   xp: number;
   createdAt: string;
