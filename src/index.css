@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -340,5 +339,35 @@
       opacity: 1; 
       transform: translate(-50%, -50%) scale(1.1); 
     }
+  }
+}
+
+/* Handwriting font for post-its */
+@layer components {
+  .font-handwriting {
+    font-family: 'Comic Sans MS', 'Marker Felt', 'Bradley Hand ITC', cursive;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  /* Post-it specific styles */
+  .postit-shadow {
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.1),
+      0 6px 20px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  /* Arrow styles */
+  .arrow-line {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Timer widget styles */
+  .timer-glow {
+    box-shadow: 
+      0 0 20px rgba(59, 130, 246, 0.3),
+      0 8px 32px rgba(0, 0, 0, 0.2);
   }
 }

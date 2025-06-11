@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trophy, Edit3, X, MoreVertical } from 'lucide-react';
+import { Plus, Trophy, Edit3, X, MoreVertical, StickyNote } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import LinkCard from '../components/LinkCard';
 import LinkEditor from '../components/LinkEditor';
@@ -495,3 +495,5 @@ const Index = () => {
 };
 
 export default Index;
+
+</initial_code>
