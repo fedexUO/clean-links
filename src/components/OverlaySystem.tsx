@@ -41,8 +41,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
   const [postIts, setPostIts] = useState<PostItData[]>([]);
   const [arrows, setArrows] = useState<ArrowData[]>([]);
   const [timers, setTimers] = useState<TimerData[]>([]);
-  const [selectedElement, setSelectedElement] = useState<string | null>(null);
-  const [mode, setMode] = useState<'select' | 'postit' | 'arrow' | 'timer'>('select');
+  const [mode, setMode] = useState<'postit' | 'arrow' | 'timer' | null>(null);
   const [isCreatingArrow, setIsCreatingArrow] = useState(false);
   const [arrowStart, setArrowStart] = useState<{ x: number; y: number } | null>(null);
 
@@ -55,16 +54,16 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
     
     const newPostIt: PostItData = {
       id: `postit-${Date.now()}`,
-      x: x - 50,
-      y: y - 50,
-      rotation: Math.random() * 6 - 3, // Random rotation between -3 and 3 degrees
+      x: Math.max(0, x - 50),
+      y: Math.max(0, y - 50),
+      rotation: Math.random() * 6 - 3,
       color: 'yellow',
       size: 'medium',
       text: ''
     };
     
     setPostIts(prev => [...prev, newPostIt]);
-    setSelectedElement(newPostIt.id);
+    setMode(null);
   }, [mode]);
 
   const addTimer = useCallback((e: React.MouseEvent) => {
@@ -76,12 +75,12 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
     
     const newTimer: TimerData = {
       id: `timer-${Date.now()}`,
-      x: x - 110,
-      y: y - 80
+      x: Math.max(0, x - 110),
+      y: Math.max(0, y - 80)
     };
     
     setTimers(prev => [...prev, newTimer]);
-    setSelectedElement(newTimer.id);
+    setMode(null);
   }, [mode]);
 
   const handleArrowCreation = useCallback((e: React.MouseEvent) => {
@@ -107,13 +106,14 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
       };
       
       setArrows(prev => [...prev, newArrow]);
-      setSelectedElement(newArrow.id);
       setIsCreatingArrow(false);
       setArrowStart(null);
+      setMode(null);
     }
   }, [mode, isCreatingArrow, arrowStart]);
 
   const handleCanvasClick = (e: React.MouseEvent) => {
+    if (!mode) return;
     e.preventDefault();
     
     switch (mode) {
@@ -125,9 +125,6 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         break;
       case 'timer':
         addTimer(e);
-        break;
-      case 'select':
-        setSelectedElement(null);
         break;
     }
   };
@@ -152,17 +149,14 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
 
   const deletePostIt = useCallback((id: string) => {
     setPostIts(prev => prev.filter(postit => postit.id !== id));
-    setSelectedElement(null);
   }, []);
 
   const deleteArrow = useCallback((id: string) => {
     setArrows(prev => prev.filter(arrow => arrow.id !== id));
-    setSelectedElement(null);
   }, []);
 
   const deleteTimer = useCallback((id: string) => {
     setTimers(prev => prev.filter(timer => timer.id !== id));
-    setSelectedElement(null);
   }, []);
 
   if (!isVisible) return null;
@@ -173,19 +167,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setMode('select')}
-            className={`p-3 rounded-xl transition-all ${
-              mode === 'select' 
-                ? 'bg-blue-500 text-white shadow-lg' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-            title="Seleziona"
-          >
-            <div className="w-4 h-4 border-2 border-current"></div>
-          </button>
-          
-          <button
-            onClick={() => setMode('postit')}
+            onClick={() => setMode(mode === 'postit' ? null : 'postit')}
             className={`p-3 rounded-xl transition-all ${
               mode === 'postit' 
                 ? 'bg-yellow-500 text-white shadow-lg' 
@@ -197,7 +179,15 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
           </button>
           
           <button
-            onClick={() => setMode('arrow')}
+            onClick={() => {
+              if (mode === 'arrow') {
+                setMode(null);
+                setIsCreatingArrow(false);
+                setArrowStart(null);
+              } else {
+                setMode('arrow');
+              }
+            }}
             className={`p-3 rounded-xl transition-all ${
               mode === 'arrow' 
                 ? 'bg-green-500 text-white shadow-lg' 
@@ -209,7 +199,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
           </button>
           
           <button
-            onClick={() => setMode('timer')}
+            onClick={() => setMode(mode === 'timer' ? null : 'timer')}
             className={`p-3 rounded-xl transition-all ${
               mode === 'timer' 
                 ? 'bg-purple-500 text-white shadow-lg' 
@@ -234,45 +224,39 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
 
       {/* Canvas */}
       <div
-        className="w-full h-full cursor-crosshair"
+        className="w-full h-full"
         onClick={handleCanvasClick}
         style={{ 
-          cursor: mode === 'select' ? 'default' : mode === 'postit' ? 'copy' : mode === 'arrow' ? 'crosshair' : 'copy'
+          cursor: mode === 'postit' ? 'copy' : mode === 'arrow' ? 'crosshair' : mode === 'timer' ? 'copy' : 'default'
         }}
       >
-        {/* Post-its */}
+        {/* Post-its - Always visible */}
         {postIts.map(postit => (
           <PostItNote
             key={postit.id}
             {...postit}
             onUpdate={updatePostIt}
             onDelete={deletePostIt}
-            isSelected={selectedElement === postit.id}
-            onSelect={setSelectedElement}
           />
         ))}
 
-        {/* Arrows */}
+        {/* Arrows - Always visible */}
         {arrows.map(arrow => (
           <ArrowElement
             key={arrow.id}
             {...arrow}
             onUpdate={updateArrow}
             onDelete={deleteArrow}
-            isSelected={selectedElement === arrow.id}
-            onSelect={setSelectedElement}
           />
         ))}
 
-        {/* Timers */}
+        {/* Timers - Always visible */}
         {timers.map(timer => (
           <TimerWidget
             key={timer.id}
             {...timer}
             onUpdate={updateTimer}
             onDelete={deleteTimer}
-            isSelected={selectedElement === timer.id}
-            onSelect={setSelectedElement}
           />
         ))}
 
@@ -295,7 +279,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
       </div>
 
       {/* Instructions */}
-      {mode !== 'select' && (
+      {mode && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-lg text-sm">
           {mode === 'postit' && 'Clicca per aggiungere un post-it'}
           {mode === 'arrow' && (isCreatingArrow ? 'Clicca per terminare la freccia' : 'Clicca per iniziare una freccia')}

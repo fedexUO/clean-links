@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, RotateCw } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface ArrowElementProps {
   id: string;
@@ -13,8 +13,6 @@ interface ArrowElementProps {
   style: 'straight' | 'curved';
   onUpdate: (id: string, updates: Partial<ArrowElementProps>) => void;
   onDelete: (id: string) => void;
-  isSelected: boolean;
-  onSelect: (id: string) => void;
 }
 
 const ArrowElement: React.FC<ArrowElementProps> = ({
@@ -27,11 +25,10 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
   thickness,
   style,
   onUpdate,
-  onDelete,
-  isSelected,
-  onSelect
+  onDelete
 }) => {
   const [isDragging, setIsDragging] = useState<'start' | 'end' | 'line' | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const colorClasses = {
@@ -44,8 +41,8 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
 
   const handleMouseDown = (e: React.MouseEvent, type: 'start' | 'end' | 'line') => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(type);
-    onSelect(id);
     
     if (type === 'line') {
       setDragOffset({
@@ -57,19 +54,23 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging) return;
+    e.preventDefault();
+
+    const newX = Math.max(0, Math.min(window.innerWidth, e.clientX));
+    const newY = Math.max(0, Math.min(window.innerHeight, e.clientY));
 
     switch (isDragging) {
       case 'start':
-        onUpdate(id, { startX: e.clientX, startY: e.clientY });
+        onUpdate(id, { startX: newX, startY: newY });
         break;
       case 'end':
-        onUpdate(id, { endX: e.clientX, endY: e.clientY });
+        onUpdate(id, { endX: newX, endY: newY });
         break;
       case 'line':
         const centerX = (startX + endX) / 2;
         const centerY = (startY + endY) / 2;
-        const deltaX = e.clientX - dragOffset.x - centerX;
-        const deltaY = e.clientY - dragOffset.y - centerY;
+        const deltaX = newX - dragOffset.x - centerX;
+        const deltaY = newY - dragOffset.y - centerY;
         onUpdate(id, {
           startX: startX + deltaX,
           startY: startY + deltaY,
@@ -80,7 +81,8 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: MouseEvent) => {
+    e.preventDefault();
     setIsDragging(null);
   };
 
@@ -119,30 +121,45 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
     return `M ${endX} ${endY} L ${x1} ${y1} M ${endX} ${endY} L ${x2} ${y2}`;
   };
 
-  const svgBounds = {
-    minX: Math.min(startX, endX) - 20,
-    minY: Math.min(startY, endY) - 20,
-    maxX: Math.max(startX, endX) + 20,
-    maxY: Math.max(startY, endY) + 20
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(id);
   };
 
   return (
-    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: isSelected ? 999 : 99 }}>
+    <div 
+      className="fixed inset-0 pointer-events-none" 
+      style={{ zIndex: isDragging ? 999 : 99 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <svg
         width="100%"
         height="100%"
         className="absolute inset-0"
         style={{ pointerEvents: 'none' }}
       >
-        {/* Main arrow line */}
+        {/* Invisible wider line for better hitbox */}
+        <path
+          d={getPath()}
+          stroke="transparent"
+          strokeWidth={Math.max(20, thickness * 3)}
+          fill="none"
+          strokeLinecap="round"
+          className="pointer-events-auto cursor-move"
+          onMouseDown={(e) => handleMouseDown(e as any, 'line')}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        />
+        
+        {/* Visible arrow line */}
         <path
           d={getPath()}
           stroke={colorClasses[color as keyof typeof colorClasses]}
           strokeWidth={thickness}
           fill="none"
           strokeLinecap="round"
-          className="pointer-events-auto cursor-move"
-          onMouseDown={(e) => handleMouseDown(e as any, 'line')}
+          className="pointer-events-none"
         />
         
         {/* Arrow head */}
@@ -151,15 +168,16 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
           stroke={colorClasses[color as keyof typeof colorClasses]}
           strokeWidth={thickness}
           strokeLinecap="round"
+          className="pointer-events-none"
         />
 
-        {/* Control points when selected */}
-        {isSelected && (
+        {/* Control points when hovered */}
+        {isHovered && (
           <>
             <circle
               cx={startX}
               cy={startY}
-              r="6"
+              r="8"
               fill="white"
               stroke="#3b82f6"
               strokeWidth="2"
@@ -169,7 +187,7 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
             <circle
               cx={endX}
               cy={endY}
-              r="6"
+              r="8"
               fill="white"
               stroke="#3b82f6"
               strokeWidth="2"
@@ -180,16 +198,17 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
         )}
       </svg>
 
-      {/* Delete button */}
-      {isSelected && (
+      {/* Delete button when hovered */}
+      {isHovered && (
         <button
-          onClick={() => onDelete(id)}
-          className="absolute bg-red-500 hover:bg-red-600 text-white p-1 rounded-full shadow-md pointer-events-auto"
+          onClick={handleDelete}
+          className="absolute bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md pointer-events-auto transition-all"
           style={{
             left: (startX + endX) / 2 - 12,
-            top: (startY + endY) / 2 - 20,
+            top: (startY + endY) / 2 - 24,
             zIndex: 1001
           }}
+          title="Elimina freccia"
         >
           <X size={12} />
         </button>
