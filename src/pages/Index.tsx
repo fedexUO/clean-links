@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Plus, Trophy, Edit3, X, MoreVertical, StickyNote } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +10,7 @@ import AvatarSelector from '../components/AvatarSelector';
 import MissionsPanel from '../components/MissionsPanel';
 import BackgroundSelector from '../components/BackgroundSelector';
 import FontSelector from '../components/FontSelector';
+import OverlaySystem from '../components/OverlaySystem';
 import { LinkItem, loadLinks, saveLinks } from '../utils/linkStorage';
 import { 
   UserProfile as UserProfileType, 
@@ -28,6 +30,7 @@ const Index = () => {
   const [showMissionsPanel, setShowMissionsPanel] = useState(false);
   const [showUsernameEditor, setShowUsernameEditor] = useState(false);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
+  const [showOverlaySystem, setShowOverlaySystem] = useState(false);
   const [editingLink, setEditingLink] = useState<LinkItem | null>(null);
   const [title, setTitle] = useState('I MIEI LINK');
   const [userProfile, setUserProfile] = useState<UserProfileType | null>(null);
@@ -334,6 +337,13 @@ const Index = () => {
               
               <div className="flex gap-3">
                 <button
+                  onClick={() => setShowOverlaySystem(true)}
+                  className="bg-green-600/90 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-green-500/50 super-circle"
+                  title="POST-IT E FRECCE"
+                >
+                  <StickyNote size={18} />
+                </button>
+                <button
                   onClick={() => setShowBackgroundSelector(true)}
                   className="bg-white/80 hover:bg-white/95 text-slate-700 p-3 rounded-full transition-all shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-white/50 super-circle"
                   title="CAMBIA SFONDO"
@@ -393,6 +403,12 @@ const Index = () => {
             </div>
           )}
         </main>
+
+        {/* Overlay System */}
+        <OverlaySystem
+          isVisible={showOverlaySystem}
+          onClose={() => setShowOverlaySystem(false)}
+        />
 
         {/* Modals */}
         {showLinkEditor && (
@@ -495,5 +511,3 @@ const Index = () => {
 };
 
 export default Index;
-
-</initial_code>
