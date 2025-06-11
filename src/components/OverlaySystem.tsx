@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { StickyNote, ArrowRight, Clock, X } from 'lucide-react';
 import PostItNote from './PostItNote';
@@ -44,6 +43,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
   const [mode, setMode] = useState<'postit' | 'arrow' | 'timer' | null>(null);
   const [isCreatingArrow, setIsCreatingArrow] = useState(false);
   const [arrowStart, setArrowStart] = useState<{ x: number; y: number } | null>(null);
+  const [showToolbar, setShowToolbar] = useState(true);
 
   const addPostIt = useCallback((e: React.MouseEvent) => {
     if (mode !== 'postit') return;
@@ -159,68 +159,88 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
     setTimers(prev => prev.filter(timer => timer.id !== id));
   }, []);
 
+  const handleCloseToolbar = () => {
+    setShowToolbar(false);
+    setMode(null);
+    setIsCreatingArrow(false);
+    setArrowStart(null);
+  };
+
   if (!isVisible) return null;
 
   return (
     <div className="fixed inset-0 z-40">
-      {/* Toolbar */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setMode(mode === 'postit' ? null : 'postit')}
-            className={`p-3 rounded-xl transition-all ${
-              mode === 'postit' 
-                ? 'bg-yellow-500 text-white shadow-lg' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-            title="Aggiungi Post-it"
-          >
-            <StickyNote size={16} />
-          </button>
-          
-          <button
-            onClick={() => {
-              if (mode === 'arrow') {
-                setMode(null);
-                setIsCreatingArrow(false);
-                setArrowStart(null);
-              } else {
-                setMode('arrow');
-              }
-            }}
-            className={`p-3 rounded-xl transition-all ${
-              mode === 'arrow' 
-                ? 'bg-green-500 text-white shadow-lg' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-            title="Aggiungi Freccia"
-          >
-            <ArrowRight size={16} />
-          </button>
-          
-          <button
-            onClick={() => setMode(mode === 'timer' ? null : 'timer')}
-            className={`p-3 rounded-xl transition-all ${
-              mode === 'timer' 
-                ? 'bg-purple-500 text-white shadow-lg' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-            title="Aggiungi Timer"
-          >
-            <Clock size={16} />
-          </button>
-          
-          <div className="w-px h-8 bg-gray-300 mx-2"></div>
-          
-          <button
-            onClick={onClose}
-            className="p-3 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 transition-all"
-            title="Chiudi"
-          >
-            <X size={16} />
-          </button>
+      {/* Toolbar - only show if showToolbar is true */}
+      {showToolbar && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMode(mode === 'postit' ? null : 'postit')}
+              className={`p-3 rounded-xl transition-all ${
+                mode === 'postit' 
+                  ? 'bg-yellow-500 text-white shadow-lg' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+              title="Aggiungi Post-it"
+            >
+              <StickyNote size={16} />
+            </button>
+            
+            <button
+              onClick={() => {
+                if (mode === 'arrow') {
+                  setMode(null);
+                  setIsCreatingArrow(false);
+                  setArrowStart(null);
+                } else {
+                  setMode('arrow');
+                }
+              }}
+              className={`p-3 rounded-xl transition-all ${
+                mode === 'arrow' 
+                  ? 'bg-green-500 text-white shadow-lg' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+              title="Aggiungi Freccia"
+            >
+              <ArrowRight size={16} />
+            </button>
+            
+            <button
+              onClick={() => setMode(mode === 'timer' ? null : 'timer')}
+              className={`p-3 rounded-xl transition-all ${
+                mode === 'timer' 
+                  ? 'bg-purple-500 text-white shadow-lg' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+              title="Aggiungi Timer"
+            >
+              <Clock size={16} />
+            </button>
+            
+            <div className="w-px h-8 bg-gray-300 mx-2"></div>
+            
+            <button
+              onClick={handleCloseToolbar}
+              className="p-3 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 transition-all"
+              title="Chiudi toolbar"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Show toolbar button when toolbar is hidden */}
+      {!showToolbar && (
+        <button
+          onClick={() => setShowToolbar(true)}
+          className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-xl transition-all z-50"
+          title="Mostra toolbar"
+        >
+          <StickyNote size={18} />
+        </button>
+      )}
 
       {/* Canvas */}
       <div
@@ -279,7 +299,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
       </div>
 
       {/* Instructions */}
-      {mode && (
+      {mode && showToolbar && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-lg text-sm">
           {mode === 'postit' && 'Clicca per aggiungere un post-it'}
           {mode === 'arrow' && (isCreatingArrow ? 'Clicca per terminare la freccia' : 'Clicca per iniziare una freccia')}
