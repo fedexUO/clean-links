@@ -26,7 +26,6 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
   const [inputMinutes, setInputMinutes] = useState('');
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Crea un suono di campanella usando Web Audio API
@@ -91,17 +90,20 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
   };
 
   const handlePlayPause = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsRunning(!isRunning);
   };
 
   const handleReset = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsRunning(false);
     setTimeLeft(initialTime);
   };
 
   const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsRunning(false);
     setIsSettingTime(true);
@@ -109,12 +111,13 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
   };
 
   const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onDelete(id);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (isSettingTime) return;
+    if (isSettingTime || e.target !== e.currentTarget) return;
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
@@ -194,7 +197,7 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
 
   return (
     <div
-      className={`absolute bg-slate-900/95 backdrop-blur-sm text-white p-4 rounded-2xl shadow-2xl cursor-move select-none transition-all duration-100 min-w-[220px] ${
+      className={`absolute bg-slate-900/95 backdrop-blur-sm text-white p-4 rounded-2xl shadow-2xl cursor-move select-none transition-all duration-200 min-w-[220px] ${
         isDragging ? 'scale-105 shadow-3xl z-50' : 'hover:shadow-3xl'
       }`}
       style={{
@@ -208,8 +211,9 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
     >
       {/* Hover controls */}
       {isHovered && !isDragging && (
-        <div className="absolute -top-3 -right-3 flex gap-1">
+        <div className="absolute -top-3 -right-3 flex gap-1 z-[1001]">
           <button
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={handleEdit}
             className="bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-full shadow-md transition-all"
             title="Modifica tempo"
@@ -217,6 +221,7 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
             <Edit3 size={12} />
           </button>
           <button
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={handleDelete}
             className="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md transition-all"
             title="Elimina timer"
@@ -250,6 +255,7 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
       {/* Controls */}
       <div className="flex justify-center gap-2">
         <button
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={handlePlayPause}
           className={`p-2 rounded-full transition-all ${
             isRunning 
@@ -261,6 +267,7 @@ const TimerWidget: React.FC<TimerWidgetProps> = ({
         </button>
         
         <button
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={handleReset}
           className="p-2 bg-slate-600 hover:bg-slate-500 rounded-full transition-all"
         >

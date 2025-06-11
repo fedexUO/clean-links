@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, Trophy, Edit3, X, MoreVertical, StickyNote } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -404,10 +403,10 @@ const Index = () => {
           )}
         </main>
 
-        {/* Overlay System */}
+        {/* Overlay System - Always visible */}
         <OverlaySystem
-          isVisible={showOverlaySystem}
-          onClose={() => setShowOverlaySystem(false)}
+          isVisible={true}
+          onClose={() => {}}
         />
 
         {/* Modals */}

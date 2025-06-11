@@ -48,7 +48,7 @@ const PostItNote: React.FC<PostItNoteProps> = ({
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (isEditing) return;
+    if (isEditing || e.target !== e.currentTarget) return;
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
@@ -80,12 +80,14 @@ const PostItNote: React.FC<PostItNoteProps> = ({
   }, [isDragging, dragStart]);
 
   const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsEditing(true);
     setTimeout(() => textareaRef.current?.focus(), 0);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsDeleting(true);
     setTimeout(() => {
@@ -109,7 +111,7 @@ const PostItNote: React.FC<PostItNoteProps> = ({
 
   return (
     <div
-      className={`absolute ${sizeClasses[size]} ${colorClasses[color as keyof typeof colorClasses]} border-2 shadow-lg cursor-move select-none transition-all duration-100 ${
+      className={`absolute ${sizeClasses[size]} ${colorClasses[color as keyof typeof colorClasses]} border-2 shadow-lg cursor-move select-none transition-all duration-200 ${
         isDragging ? 'scale-105 shadow-xl z-50' : 'hover:shadow-xl'
       } ${isDeleting ? 'animate-pulse scale-75 opacity-0' : ''}`}
       style={{
@@ -127,8 +129,9 @@ const PostItNote: React.FC<PostItNoteProps> = ({
       
       {/* Hover controls */}
       {isHovered && !isEditing && !isDragging && (
-        <div className="absolute -top-3 -right-3 flex gap-1">
+        <div className="absolute -top-3 -right-3 flex gap-1 z-[1001]">
           <button
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={handleEdit}
             className="bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-full shadow-md transition-all"
             title="Modifica testo"
@@ -136,6 +139,7 @@ const PostItNote: React.FC<PostItNoteProps> = ({
             <Edit3 size={12} />
           </button>
           <button
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={handleDelete}
             className="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md transition-all"
             title="Elimina post-it"
@@ -152,11 +156,15 @@ const PostItNote: React.FC<PostItNoteProps> = ({
           onChange={handleTextChange}
           onBlur={handleTextBlur}
           onKeyDown={handleKeyDown}
+          onMouseDown={(e) => e.stopPropagation()}
           className="w-full h-full p-2 bg-transparent border-none outline-none resize-none text-sm font-handwriting"
           placeholder="Scrivi qui..."
         />
       ) : (
-        <div className="w-full h-full p-2 text-sm font-handwriting break-words overflow-hidden flex items-center justify-center text-center">
+        <div 
+          className="w-full h-full p-2 text-sm font-handwriting break-words overflow-hidden flex items-center justify-center text-center"
+          onMouseDown={handleMouseDown}
+        >
           {text || 'Clicca la matita per scrivere'}
         </div>
       )}

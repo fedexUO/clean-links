@@ -122,17 +122,13 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
   };
 
   const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onDelete(id);
   };
 
   return (
-    <div 
-      className="fixed inset-0 pointer-events-none" 
-      style={{ zIndex: isDragging ? 999 : 99 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: isDragging ? 999 : 99 }}>
       <svg
         width="100%"
         height="100%"
@@ -143,7 +139,7 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
         <path
           d={getPath()}
           stroke="transparent"
-          strokeWidth={Math.max(20, thickness * 3)}
+          strokeWidth={Math.max(30, thickness * 5)}
           fill="none"
           strokeLinecap="round"
           className="pointer-events-auto cursor-move"
@@ -201,12 +197,12 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
       {/* Delete button when hovered */}
       {isHovered && (
         <button
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={handleDelete}
-          className="absolute bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md pointer-events-auto transition-all"
+          className="absolute bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md pointer-events-auto transition-all z-[1001]"
           style={{
             left: (startX + endX) / 2 - 12,
-            top: (startY + endY) / 2 - 24,
-            zIndex: 1001
+            top: (startY + endY) / 2 - 24
           }}
           title="Elimina freccia"
         >
