@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { StickyNote, ArrowRight, Clock, X } from 'lucide-react';
 import PostItNote from './PostItNote';
@@ -115,6 +116,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (!mode) return;
     e.preventDefault();
+    e.stopPropagation();
     
     switch (mode) {
       case 'postit':
@@ -170,7 +172,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
 
   return (
     <div className="fixed inset-0 z-40">
-      {/* Toolbar - only show if showToolbar is true */}
+      {/* Toolbar */}
       {showToolbar && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50">
           <div className="flex items-center gap-2">
@@ -231,72 +233,63 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         </div>
       )}
 
-      {/* Show toolbar button when toolbar is hidden */}
-      {!showToolbar && (
-        <button
-          onClick={() => setShowToolbar(true)}
-          className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-xl transition-all z-50"
-          title="Mostra toolbar"
-        >
-          <StickyNote size={18} />
-        </button>
+      {/* Canvas - Solo intercetta i click quando si sta aggiungendo un elemento */}
+      {mode && (
+        <div
+          className="w-full h-full"
+          onClick={handleCanvasClick}
+          style={{ 
+            cursor: mode === 'postit' ? 'copy' : mode === 'arrow' ? 'crosshair' : mode === 'timer' ? 'copy' : 'default'
+          }}
+        />
       )}
 
-      {/* Canvas */}
-      <div
-        className="w-full h-full"
-        onClick={handleCanvasClick}
-        style={{ 
-          cursor: mode === 'postit' ? 'copy' : mode === 'arrow' ? 'crosshair' : mode === 'timer' ? 'copy' : 'default'
-        }}
-      >
-        {/* Post-its - Always visible */}
-        {postIts.map(postit => (
-          <PostItNote
-            key={postit.id}
-            {...postit}
-            onUpdate={updatePostIt}
-            onDelete={deletePostIt}
-          />
-        ))}
+      {/* Post-its - Always visible */}
+      {postIts.map(postit => (
+        <PostItNote
+          key={postit.id}
+          {...postit}
+          onUpdate={updatePostIt}
+          onDelete={deletePostIt}
+        />
+      ))}
 
-        {/* Arrows - Always visible */}
-        {arrows.map(arrow => (
-          <ArrowElement
-            key={arrow.id}
-            {...arrow}
-            onUpdate={updateArrow}
-            onDelete={deleteArrow}
-          />
-        ))}
+      {/* Arrows - Always visible */}
+      {arrows.map(arrow => (
+        <ArrowElement
+          key={arrow.id}
+          {...arrow}
+          onUpdate={updateArrow}
+          onDelete={deleteArrow}
+        />
+      ))}
 
-        {/* Timers - Always visible */}
-        {timers.map(timer => (
-          <TimerWidget
-            key={timer.id}
-            {...timer}
-            onUpdate={updateTimer}
-            onDelete={deleteTimer}
-          />
-        ))}
+      {/* Timers - Always visible */}
+      {timers.map(timer => (
+        <TimerWidget
+          key={timer.id}
+          {...timer}
+          onUpdate={updateTimer}
+          onDelete={deleteTimer}
+        />
+      ))}
 
-        {/* Arrow creation preview */}
-        {isCreatingArrow && arrowStart && (
-          <div className="absolute inset-0 pointer-events-none">
-            <svg width="100%" height="100%">
-              <line
-                x1={arrowStart.x}
-                y1={arrowStart.y}
-                x2={arrowStart.x + 50}
-                y2={arrowStart.y + 50}
-                stroke="#3b82f6"
-                strokeWidth="2"
-                strokeDasharray="5,5"
-              />
-            </svg>
-          </div>
-        )}
-      </div>
+      {/* Arrow creation preview */}
+      {isCreatingArrow && arrowStart && (
+        <div className="absolute inset-0 pointer-events-none">
+          <svg width="100%" height="100%">
+            <line
+              x1={arrowStart.x}
+              y1={arrowStart.y}
+              x2={arrowStart.x + 50}
+              y2={arrowStart.y + 50}
+              stroke="#3b82f6"
+              strokeWidth="2"
+              strokeDasharray="5,5"
+            />
+          </svg>
+        </div>
+      )}
 
       {/* Instructions */}
       {mode && showToolbar && (
