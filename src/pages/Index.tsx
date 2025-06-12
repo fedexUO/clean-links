@@ -336,8 +336,12 @@ const Index = () => {
               
               <div className="flex gap-3">
                 <button
-                  onClick={() => setShowOverlaySystem(true)}
-                  className="bg-green-600/90 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border border-green-500/50 super-circle"
+                  onClick={() => setShowOverlaySystem(!showOverlaySystem)}
+                  className={`p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 backdrop-blur-sm border super-circle ${
+                    showOverlaySystem 
+                      ? 'bg-green-600 text-white border-green-500/50' 
+                      : 'bg-green-600/90 hover:bg-green-600 text-white border-green-500/50'
+                  }`}
                   title="POST-IT E FRECCE"
                 >
                   <StickyNote size={18} />
@@ -403,11 +407,13 @@ const Index = () => {
           )}
         </main>
 
-        {/* Overlay System - Always visible */}
-        <OverlaySystem
-          isVisible={true}
-          onClose={() => {}}
-        />
+        {/* Overlay System */}
+        {showOverlaySystem && (
+          <OverlaySystem
+            isVisible={showOverlaySystem}
+            onClose={() => setShowOverlaySystem(false)}
+          />
+        )}
 
         {/* Modals */}
         {showLinkEditor && (
