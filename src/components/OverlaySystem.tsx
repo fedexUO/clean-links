@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { StickyNote, ArrowRight, Clock, X } from 'lucide-react';
 import PostItNote from './PostItNote';
@@ -163,67 +164,69 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
 
   return (
     <>
-      {/* Toolbar - Always visible when overlay is active */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50 pointer-events-auto">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setMode(mode === 'postit' ? null : 'postit')}
-            className={`p-3 rounded-xl transition-all ${
-              mode === 'postit' 
-                ? 'bg-yellow-500 text-white shadow-lg' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-            title="Aggiungi Post-it"
-          >
-            <StickyNote size={16} />
-          </button>
-          
-          <button
-            onClick={() => {
-              if (mode === 'arrow') {
-                setMode(null);
-                setIsCreatingArrow(false);
-                setArrowStart(null);
-              } else {
-                setMode('arrow');
-              }
-            }}
-            className={`p-3 rounded-xl transition-all ${
-              mode === 'arrow' 
-                ? 'bg-green-500 text-white shadow-lg' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-            title="Aggiungi Freccia"
-          >
-            <ArrowRight size={16} />
-          </button>
-          
-          <button
-            onClick={() => setMode(mode === 'timer' ? null : 'timer')}
-            className={`p-3 rounded-xl transition-all ${
-              mode === 'timer' 
-                ? 'bg-purple-500 text-white shadow-lg' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
-            title="Aggiungi Timer"
-          >
-            <Clock size={16} />
-          </button>
-          
-          <div className="w-px h-8 bg-gray-300 mx-2"></div>
-          
-          <button
-            onClick={onClose}
-            className="p-3 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 transition-all"
-            title="Chiudi overlay"
-          >
-            <X size={16} />
-          </button>
+      {/* Toolbar - Solo quando l'overlay è visibile */}
+      {isVisible && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50 pointer-events-auto">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMode(mode === 'postit' ? null : 'postit')}
+              className={`p-3 rounded-xl transition-all ${
+                mode === 'postit' 
+                  ? 'bg-yellow-500 text-white shadow-lg' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+              title="Aggiungi Post-it"
+            >
+              <StickyNote size={16} />
+            </button>
+            
+            <button
+              onClick={() => {
+                if (mode === 'arrow') {
+                  setMode(null);
+                  setIsCreatingArrow(false);
+                  setArrowStart(null);
+                } else {
+                  setMode('arrow');
+                }
+              }}
+              className={`p-3 rounded-xl transition-all ${
+                mode === 'arrow' 
+                  ? 'bg-green-500 text-white shadow-lg' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+              title="Aggiungi Freccia"
+            >
+              <ArrowRight size={16} />
+            </button>
+            
+            <button
+              onClick={() => setMode(mode === 'timer' ? null : 'timer')}
+              className={`p-3 rounded-xl transition-all ${
+                mode === 'timer' 
+                  ? 'bg-purple-500 text-white shadow-lg' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+              title="Aggiungi Timer"
+            >
+              <Clock size={16} />
+            </button>
+            
+            <div className="w-px h-8 bg-gray-300 mx-2"></div>
+            
+            <button
+              onClick={onClose}
+              className="p-3 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 transition-all"
+              title="Chiudi overlay"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Canvas - Solo quando si sta aggiungendo un elemento */}
-      {mode && (
+      {/* Canvas - Solo quando si sta aggiungendo un elemento e l'overlay è visibile */}
+      {isVisible && mode && (
         <div
           className="fixed inset-0 z-40 pointer-events-auto"
           onClick={handleCanvasClick}
@@ -233,7 +236,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         />
       )}
 
-      {/* Post-its - Always visible */}
+      {/* Post-its - Sempre visibili quando esistono */}
       {postIts.map(postit => (
         <PostItNote
           key={postit.id}
@@ -243,7 +246,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         />
       ))}
 
-      {/* Arrows - Always visible */}
+      {/* Arrows - Sempre visibili quando esistono */}
       {arrows.map(arrow => (
         <ArrowElement
           key={arrow.id}
@@ -253,7 +256,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         />
       ))}
 
-      {/* Timers - Always visible */}
+      {/* Timers - Sempre visibili quando esistono */}
       {timers.map(timer => (
         <TimerWidget
           key={timer.id}
@@ -263,8 +266,8 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         />
       ))}
 
-      {/* Arrow creation preview */}
-      {isCreatingArrow && arrowStart && (
+      {/* Arrow creation preview - Solo quando si sta creando una freccia e l'overlay è visibile */}
+      {isVisible && isCreatingArrow && arrowStart && (
         <div className="fixed inset-0 pointer-events-none z-30">
           <svg width="100%" height="100%">
             <line
@@ -280,8 +283,8 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         </div>
       )}
 
-      {/* Instructions */}
-      {mode && (
+      {/* Instructions - Solo quando c'è un mode attivo e l'overlay è visibile */}
+      {isVisible && mode && (
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-lg text-sm z-50 pointer-events-none">
           {mode === 'postit' && 'Clicca per aggiungere un post-it'}
           {mode === 'arrow' && (isCreatingArrow ? 'Clicca per terminare la freccia' : 'Clicca per iniziare una freccia')}
