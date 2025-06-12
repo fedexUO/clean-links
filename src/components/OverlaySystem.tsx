@@ -171,10 +171,10 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-40">
+    <>
       {/* Toolbar */}
       {showToolbar && (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-2xl p-2 shadow-xl border border-white/50 z-50 pointer-events-auto">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMode(mode === 'postit' ? null : 'postit')}
@@ -233,10 +233,10 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         </div>
       )}
 
-      {/* Canvas - Solo intercetta i click quando si sta aggiungendo un elemento */}
+      {/* Canvas - Solo quando si sta aggiungendo un elemento */}
       {mode && (
         <div
-          className="w-full h-full"
+          className="fixed inset-0 z-40 pointer-events-auto"
           onClick={handleCanvasClick}
           style={{ 
             cursor: mode === 'postit' ? 'copy' : mode === 'arrow' ? 'crosshair' : mode === 'timer' ? 'copy' : 'default'
@@ -276,7 +276,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
 
       {/* Arrow creation preview */}
       {isCreatingArrow && arrowStart && (
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="fixed inset-0 pointer-events-none z-30">
           <svg width="100%" height="100%">
             <line
               x1={arrowStart.x}
@@ -293,13 +293,13 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
 
       {/* Instructions */}
       {mode && showToolbar && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-lg text-sm">
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-lg text-sm z-50 pointer-events-none">
           {mode === 'postit' && 'Clicca per aggiungere un post-it'}
           {mode === 'arrow' && (isCreatingArrow ? 'Clicca per terminare la freccia' : 'Clicca per iniziare una freccia')}
           {mode === 'timer' && 'Clicca per aggiungere un timer'}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
