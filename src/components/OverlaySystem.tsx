@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { StickyNote, ArrowRight, Clock, X } from 'lucide-react';
 import PostItNote from './PostItNote';
@@ -236,7 +235,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         />
       )}
 
-      {/* Post-its - Sempre visibili quando esistono */}
+      {/* Post-its - SEMPRE visibili quando esistono */}
       {postIts.map(postit => (
         <PostItNote
           key={postit.id}
@@ -246,7 +245,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         />
       ))}
 
-      {/* Arrows - Sempre visibili quando esistono */}
+      {/* Arrows - SEMPRE visibili quando esistono */}
       {arrows.map(arrow => (
         <ArrowElement
           key={arrow.id}
@@ -256,7 +255,7 @@ const OverlaySystem: React.FC<OverlaySystemProps> = ({ isVisible, onClose }) => 
         />
       ))}
 
-      {/* Timers - Sempre visibili quando esistono */}
+      {/* Timers - SEMPRE visibili quando esistono */}
       {timers.map(timer => (
         <TimerWidget
           key={timer.id}
