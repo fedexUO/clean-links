@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 interface ArrowElementProps {
@@ -30,6 +29,7 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
   const [isDragging, setIsDragging] = useState<'start' | 'end' | 'line' | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const colorClasses = {
     black: '#000000',
@@ -39,10 +39,31 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
     yellow: '#f59e0b'
   };
 
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, 100);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      if (!isDragging) {
+        setIsHovered(false);
+      }
+    }, 150);
+  };
+
   const handleMouseDown = (e: React.MouseEvent, type: 'start' | 'end' | 'line') => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(type);
+    setIsHovered(true);
     
     if (type === 'line') {
       setDragOffset({
@@ -84,6 +105,11 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
   const handleMouseUp = (e: MouseEvent) => {
     e.preventDefault();
     setIsDragging(null);
+    setTimeout(() => {
+      if (!isHovered) {
+        setIsHovered(false);
+      }
+    }, 100);
   };
 
   useEffect(() => {
@@ -96,6 +122,14 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
       };
     }
   }, [isDragging, dragOffset, startX, startY, endX, endY]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const getPath = () => {
     if (style === 'curved') {
@@ -142,10 +176,10 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
           strokeWidth={Math.max(30, thickness * 5)}
           fill="none"
           strokeLinecap="round"
-          className="pointer-events-auto cursor-move"
+          className="pointer-events-auto cursor-move transition-all duration-200"
           onMouseDown={(e) => handleMouseDown(e as any, 'line')}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         />
         
         {/* Visible arrow line */}
@@ -155,7 +189,10 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
           strokeWidth={thickness}
           fill="none"
           strokeLinecap="round"
-          className="pointer-events-none"
+          className="pointer-events-none transition-all duration-300 ease-out"
+          style={{
+            filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'none'
+          }}
         />
         
         {/* Arrow head */}
@@ -164,12 +201,15 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
           stroke={colorClasses[color as keyof typeof colorClasses]}
           strokeWidth={thickness}
           strokeLinecap="round"
-          className="pointer-events-none"
+          className="pointer-events-none transition-all duration-300 ease-out"
+          style={{
+            filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'none'
+          }}
         />
 
         {/* Control points when hovered */}
         {isHovered && (
-          <>
+          <g className="animate-fade-in">
             <circle
               cx={startX}
               cy={startY}
@@ -177,7 +217,12 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
               fill="white"
               stroke="#3b82f6"
               strokeWidth="2"
-              className="pointer-events-auto cursor-move"
+              className="pointer-events-auto cursor-move transition-all duration-200 hover:r-10 hover:stroke-blue-400"
+              style={{
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
+                transform: isDragging === 'start' ? 'scale(1.2)' : 'scale(1)',
+                transformOrigin: 'center'
+              }}
               onMouseDown={(e) => handleMouseDown(e as any, 'start')}
             />
             <circle
@@ -187,10 +232,15 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
               fill="white"
               stroke="#3b82f6"
               strokeWidth="2"
-              className="pointer-events-auto cursor-move"
+              className="pointer-events-auto cursor-move transition-all duration-200 hover:r-10 hover:stroke-blue-400"
+              style={{
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
+                transform: isDragging === 'end' ? 'scale(1.2)' : 'scale(1)',
+                transformOrigin: 'center'
+              }}
               onMouseDown={(e) => handleMouseDown(e as any, 'end')}
             />
-          </>
+          </g>
         )}
       </svg>
 
@@ -199,10 +249,11 @@ const ArrowElement: React.FC<ArrowElementProps> = ({
         <button
           onMouseDown={(e) => e.stopPropagation()}
           onClick={handleDelete}
-          className="absolute bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md pointer-events-auto transition-all z-[1001]"
+          className="absolute bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg pointer-events-auto transition-all duration-200 ease-out hover:scale-110 z-[1001] animate-fade-in"
           style={{
             left: (startX + endX) / 2 - 12,
-            top: (startY + endY) / 2 - 24
+            top: (startY + endY) / 2 - 24,
+            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'
           }}
           title="Elimina freccia"
         >
